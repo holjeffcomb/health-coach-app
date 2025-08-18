@@ -1,0 +1,32 @@
+export interface FormData {
+  age: string;
+  sex: string;
+  a1c: string;
+  ldl: string;
+  lpa: string;
+  apoB: string;
+  systolic: string;
+  diastolic: string;
+  waistHeightRatio: string;
+  vo2Max: string;
+  gripStrength: string;
+  bodyFat: string;
+  smm: string;
+  triglycerides: string;
+  totalCholesterol: string;
+  hdl: string;
+}
+
+export interface Scores {
+  metabolic: number;
+  vo2Max: number;
+  gripStrength: number;
+  bodyComposition: number;
+  total: number;
+}
+
+export interface Grade {
+  grade: string;
+  meaning: string;
+  color: string;
+}
