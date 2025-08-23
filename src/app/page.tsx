@@ -116,7 +116,7 @@ function App() {
   };
 
   const handleAuthSuccess = () => {
-    console.log("✅ Auth success, going to calculator");
+    console.log("✅ Auth success, going to dashboard");
     setCurrentPage("dashboard");
   };
 
