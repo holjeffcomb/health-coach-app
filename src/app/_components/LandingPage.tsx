@@ -1,3 +1,4 @@
+// app/_components/LandingPage.tsx - Updated with auth integration
 "use client";
 
 import React, { useState } from "react";
@@ -15,14 +16,21 @@ import {
   Award,
 } from "lucide-react";
 
-const LandingPage: React.FC<{ onStartAssessment: () => void }> = ({
+// Updated interface to include auth handler
+interface LandingPageProps {
+  onStartAssessment: () => void;
+  onAuthClick?: () => void; // New prop for auth
+}
+
+const LandingPage: React.FC<LandingPageProps> = ({
   onStartAssessment,
+  onAuthClick,
 }) => {
   const [showDemo, setShowDemo] = useState(false);
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
+      {/* Navigation - Updated with working auth button */}
       <nav className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -39,8 +47,11 @@ const LandingPage: React.FC<{ onStartAssessment: () => void }> = ({
               <button className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
                 How It Works
               </button>
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                Login
+              <button
+                onClick={onAuthClick}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              >
+                Login / Sign Up
               </button>
             </div>
           </div>
@@ -157,6 +168,7 @@ const LandingPage: React.FC<{ onStartAssessment: () => void }> = ({
         </section>
       )}
 
+      {/* Rest of your existing LandingPage component sections... */}
       {/* Features Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -226,128 +238,7 @@ const LandingPage: React.FC<{ onStartAssessment: () => void }> = ({
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                Why Choose Our Health Calculator?
-              </h2>
-              <div className="space-y-6">
-                <div className="flex items-start">
-                  <div className="bg-green-100 rounded-full p-2 mr-4 flex-shrink-0">
-                    <Award className="w-5 h-5 text-green-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      Science-Based Assessment
-                    </h3>
-                    <p className="text-gray-600">
-                      Built on peer-reviewed research and validated health
-                      metrics for accurate results.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start">
-                  <div className="bg-green-100 rounded-full p-2 mr-4 flex-shrink-0">
-                    <Activity className="w-5 h-5 text-green-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      Comprehensive Analysis
-                    </h3>
-                    <p className="text-gray-600">
-                      Evaluates multiple health dimensions for a complete
-                      picture of your wellness.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start">
-                  <div className="bg-green-100 rounded-full p-2 mr-4 flex-shrink-0">
-                    <CheckCircle className="w-5 h-5 text-green-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      Actionable Insights
-                    </h3>
-                    <p className="text-gray-600">
-                      Receive specific recommendations to improve your health
-                      outcomes.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start">
-                  <div className="bg-green-100 rounded-full p-2 mr-4 flex-shrink-0">
-                    <Shield className="w-5 h-5 text-green-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      Privacy Protected
-                    </h3>
-                    <p className="text-gray-600">
-                      Your health data is secure and never shared with third
-                      parties.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-8">
-              <div className="text-center">
-                <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                    Sample Health Report
-                  </h3>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Overall Score</span>
-                      <span className="text-2xl font-bold text-green-600">
-                        A-
-                      </span>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">
-                          Metabolic Health
-                        </span>
-                        <span className="text-sm font-medium text-green-600">
-                          Excellent
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">
-                          Fitness Level
-                        </span>
-                        <span className="text-sm font-medium text-blue-600">
-                          Very Good
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">
-                          Body Composition
-                        </span>
-                        <span className="text-sm font-medium text-purple-600">
-                          Good
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <p className="text-gray-600 text-sm">
-                  See your detailed breakdown and improvement recommendations
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
+      {/* CTA Section - Updated with working auth button */}
       <section className="bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 text-white py-20">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-bold mb-6">
@@ -365,7 +256,10 @@ const LandingPage: React.FC<{ onStartAssessment: () => void }> = ({
               Start Your Free Assessment
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
-            <button className="border-2 border-white text-white hover:bg-white hover:text-gray-900 px-8 py-4 rounded-lg text-lg font-semibold transition-colors">
+            <button
+              onClick={onAuthClick}
+              className="border-2 border-white text-white hover:bg-white hover:text-gray-900 px-8 py-4 rounded-lg text-lg font-semibold transition-colors"
+            >
               Sign Up / Login
             </button>
           </div>
