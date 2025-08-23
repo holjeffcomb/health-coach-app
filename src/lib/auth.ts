@@ -19,7 +19,7 @@ export const auth = betterAuth({
     "http://localhost:3000", // ← ADD THIS LINE (what you're using)
     "https://localhost:3000", // ← ADD THIS LINE (for future HTTPS)
     // Add your production domain later:
-    // "https://yourdomain.com"
+    "https://health-coach-calculator.vercel.app",
   ],
 
   // Enable email and password authentication
