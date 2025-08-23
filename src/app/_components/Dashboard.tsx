@@ -1,9 +1,3 @@
-// ===========================================
-// 🔍 DEBUG: Dashboard Component Issues
-// ===========================================
-
-// Update your Dashboard component with this debugging version:
-
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -71,12 +65,6 @@ const Dashboard: React.FC<DashboardProps> = ({
       setLoading(false);
     }
   };
-
-  // 🔍 DEBUG: Log what we're about to render
-  console.log(
-    "📊 Dashboard: About to render with user:",
-    user?.email || "null"
-  );
 
   return (
     <div className="min-h-screen bg-gray-50">

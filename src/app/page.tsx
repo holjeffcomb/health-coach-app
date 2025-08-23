@@ -77,8 +77,8 @@ function App() {
         currentPage
       );
 
-      // Only auto-navigate to dashboard if we're on landing or register
-      if (currentPage === "landing" || currentPage === "register") {
+      // Only auto-navigate to dashboard if we're on landing
+      if (currentPage === "landing") {
         console.log("📝 Auto-navigating to dashboard");
         setCurrentPage("dashboard");
       }
@@ -117,7 +117,7 @@ function App() {
 
   const handleAuthSuccess = () => {
     console.log("✅ Auth success, going to calculator");
-    setCurrentPage("calculator");
+    setCurrentPage("dashboard");
   };
 
   const handleGoToCalculator = () => {
