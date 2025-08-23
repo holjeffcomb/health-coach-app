@@ -21,8 +21,16 @@ import {
   Zap,
 } from "lucide-react";
 
+interface User {
+  id?: string;
+  email?: string;
+  name?: string;
+  emailVerified?: boolean;
+  // Add other user fields as needed
+}
+
 interface DashboardProps {
-  user?: any;
+  user?: User;
   onLogout: () => void;
   onStartCalculator: () => void;
 }

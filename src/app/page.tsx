@@ -1,4 +1,4 @@
-// app/page.tsx - Fixed session state handling
+// app/page.tsx - Fixed session state handling with persistence
 "use client";
 
 import { useState, useEffect } from "react";
@@ -14,37 +14,80 @@ function App() {
   const [currentPage, setCurrentPage] = useState<PageState>("landing");
   const { data: session, isPending, error } = useSession();
 
+  // 🔧 FIX: Add persistent user state to prevent disappearing
+  type User = {
+    email?: string;
+    // Add other expected user properties here, or use unknown for dynamic keys
+    [key: string]: unknown;
+  };
+  const [persistentUser, setPersistentUser] = useState<User | null>(null);
+  const [hasEverHadSession, setHasEverHadSession] = useState(false);
+
   // 🔍 DEBUG: Log session state changes
   useEffect(() => {
     console.log("🔍 Session state changed:", {
       session: session ? "exists" : "null",
+      persistentUser: persistentUser ? "exists" : "null",
       isPending,
       error: error?.message,
       currentPage,
       userEmail: session?.user?.email,
+      persistentUserEmail: persistentUser?.email,
+      hasEverHadSession,
     });
-  }, [session, isPending, error, currentPage]);
+  }, [
+    session,
+    persistentUser,
+    isPending,
+    error,
+    currentPage,
+    hasEverHadSession,
+  ]);
+
+  // 🔧 FIX: Manage persistent user state
+  useEffect(() => {
+    if (session?.user) {
+      console.log("💾 Storing user data persistently");
+      setPersistentUser(session.user);
+      setHasEverHadSession(true);
+    } else if (!isPending && hasEverHadSession && !session) {
+      // Only clear persistent user if we're not loading AND we definitely don't have a session
+      console.log("🗑️ Session definitely lost, clearing persistent user");
+      setPersistentUser(null);
+      setHasEverHadSession(false);
+    }
+  }, [session, isPending, hasEverHadSession]);
 
   // Handle session state changes
   useEffect(() => {
     if (isPending) {
       // Still loading, don't make navigation decisions yet
+      console.log("⏳ Still loading session...");
       return;
     }
 
-    if (session) {
-      // ✅ User is authenticated
-      console.log("✅ User authenticated, current page:", currentPage);
+    // Use either current session or persistent user data
+    const effectiveUser =
+      session?.user || (hasEverHadSession ? persistentUser : null);
+
+    if (effectiveUser) {
+      // ✅ User is authenticated (or we have persistent data)
+      console.log(
+        "✅ User authenticated (effective), current page:",
+        currentPage
+      );
 
       // Only auto-navigate to dashboard if we're on landing or register
       if (currentPage === "landing" || currentPage === "register") {
         console.log("📝 Auto-navigating to dashboard");
         setCurrentPage("dashboard");
       }
-      // If they're on calculator, leave them there
-    } else {
-      // ❌ No session - user should be on public pages
-      console.log("❌ No session, current page:", currentPage);
+    } else if (!session && !hasEverHadSession) {
+      // ❌ Definitely no session and never had one
+      console.log(
+        "❌ No session and never had one, current page:",
+        currentPage
+      );
 
       // If they're on protected pages, redirect to landing
       if (currentPage === "dashboard" || currentPage === "calculator") {
@@ -52,11 +95,13 @@ function App() {
         setCurrentPage("landing");
       }
     }
-  }, [session, isPending, currentPage]);
+    // If we had a session but temporarily lost it, keep user on current page
+  }, [session, isPending, currentPage, persistentUser, hasEverHadSession]);
 
   const handleStartAssessment = () => {
     console.log("🚀 Start assessment clicked, session:", !!session);
-    if (session) {
+    const effectiveUser = session?.user || persistentUser;
+    if (effectiveUser) {
       setCurrentPage("calculator");
     } else {
       setCurrentPage("register");
@@ -64,8 +109,10 @@ function App() {
   };
 
   const handleBackToLanding = () => {
-    console.log("🏠 Back to landing clicked");
+    console.log("🏠 Back to landing clicked - clearing persistent data");
     setCurrentPage("landing");
+    setPersistentUser(null);
+    setHasEverHadSession(false);
   };
 
   const handleAuthSuccess = () => {
@@ -86,8 +133,8 @@ function App() {
   // 🔍 DEBUG: Show session info in development
   const showDebugInfo = process.env.NODE_ENV === "development";
 
-  // Show loading if we're checking session
-  if (isPending) {
+  // Show loading if we're checking session AND we don't have persistent data
+  if (isPending && !persistentUser) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 flex items-center justify-center">
         <div className="text-white text-center">
@@ -110,12 +157,17 @@ function App() {
         <strong>Debug Info:</strong>
       </div>
       <div>Session: {session ? "✅" : "❌"}</div>
-      <div>User: {session?.user?.email || "none"}</div>
+      <div>Persistent: {persistentUser ? "✅" : "❌"}</div>
+      <div>User: {session?.user?.email || persistentUser?.email || "none"}</div>
       <div>Page: {currentPage}</div>
       <div>Pending: {isPending ? "yes" : "no"}</div>
+      <div>Ever had session: {hasEverHadSession ? "yes" : "no"}</div>
       {error && <div>Error: {error.message}</div>}
     </div>
   );
+
+  // Get effective user for rendering
+  const effectiveUser = session?.user || persistentUser;
 
   // Render based on current page state
   return (
@@ -133,9 +185,9 @@ function App() {
 
           case "calculator":
             // 🔒 Protect calculator page
-            if (!session) {
+            if (!effectiveUser) {
               console.log(
-                "⚠️ Calculator accessed without session, redirecting..."
+                "⚠️ Calculator accessed without user, redirecting..."
               );
               setCurrentPage("register");
               return null;
@@ -157,17 +209,15 @@ function App() {
 
           case "dashboard":
             // 🔒 Protect dashboard page
-            if (!session) {
-              console.log(
-                "⚠️ Dashboard accessed without session, redirecting..."
-              );
+            if (!effectiveUser) {
+              console.log("⚠️ Dashboard accessed without user, redirecting...");
               setCurrentPage("landing");
               return null;
             }
 
             return (
               <Dashboard
-                user={session.user}
+                user={effectiveUser}
                 onLogout={handleBackToLanding}
                 onStartCalculator={handleGoToCalculator}
               />
