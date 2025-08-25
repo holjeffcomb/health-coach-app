@@ -41,3 +41,17 @@ export interface User {
   image?: string | null;
   // Add other properties as needed
 }
+
+export interface Assessment {
+  id: string;
+  title: string;
+  form_data: FormData;
+  scores: Record<string, number>;
+  grade: {
+    grade: string;
+    meaning: string;
+    color: string;
+  };
+  created_at: string;
+  updated_at: string;
+}
