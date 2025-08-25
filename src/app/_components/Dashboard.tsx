@@ -14,6 +14,7 @@ import {
   Activity,
   Zap,
 } from "lucide-react";
+import AssessmentsList from "./AssessmentsList";
 
 interface User {
   id?: string;
@@ -208,6 +209,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                   )}
                 </p>
               </div>
+              {user?.id && <AssessmentsList userId={user.id} />}
             </div>
           ) : (
             <div className="text-red-600">⚠️ User data not available</div>

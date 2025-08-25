@@ -39,3 +39,34 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+export async function GET(req: NextRequest) {
+  try {
+    const session = await auth.api.getSession({
+      headers: req.headers,
+    });
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const result = await pool.query(
+      `SELECT id, title, form_data, scores, grade, created_at, updated_at
+       FROM wellness_assessments 
+       WHERE user_id = $1
+       ORDER BY created_at DESC`,
+      [session.user.id]
+    );
+
+    return NextResponse.json({
+      success: true,
+      assessments: result.rows,
+    });
+  } catch (error) {
+    console.error("Fetch assessments error:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch assessments" },
+      { status: 500 }
+    );
+  }
+}
