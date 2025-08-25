@@ -36,6 +36,12 @@ export const useWellnessCalculator = () => {
     color: "",
   });
 
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [lastSaved, setLastSaved] = useState<{
+    id: string;
+    timestamp: string;
+  } | null>(null);
+
   useEffect(() => {
     const newScores = calculateScores(formData);
     setScores(newScores);
@@ -48,6 +54,43 @@ export const useWellnessCalculator = () => {
 
   const loadTestScenario = (scenarioData: FormData) => {
     setFormData(scenarioData);
+  };
+
+  const saveAssessment = async (title?: string) => {
+    setIsSaving(true);
+    try {
+      const response = await fetch("/api/assessments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: title || `Assessment ${new Date().toLocaleDateString()}`,
+          formData,
+          scores,
+          grade,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setLastSaved({
+          id: result.assessment.id,
+          timestamp: result.assessment.created_at,
+        });
+        return { success: true, data: result.assessment };
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error) {
+      console.error("Save failed:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      return { success: false, error: errorMessage };
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const clearForm = () => {
@@ -78,5 +121,8 @@ export const useWellnessCalculator = () => {
     handleInputChange,
     loadTestScenario,
     clearForm,
+    saveAssessment,
+    isSaving,
+    lastSaved,
   };
 };
