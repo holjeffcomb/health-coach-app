@@ -7,19 +7,13 @@ import WellnessCalculator from "./_components/WellnessCalculator";
 import LandingPage from "./_components/LandingPage";
 import RegisterForm from "./_components/auth/RegisterForm";
 import Dashboard from "./_components/Dashboard";
+import { User } from "./types/wellness";
 
 type PageState = "landing" | "register" | "calculator" | "dashboard";
 
 function App() {
   const [currentPage, setCurrentPage] = useState<PageState>("landing");
   const { data: session, isPending, error } = useSession();
-
-  // 🔧 FIX: Add persistent user state to prevent disappearing
-  type User = {
-    email?: string;
-    // Add other expected user properties here, or use unknown for dynamic keys
-    [key: string]: unknown;
-  };
   const [persistentUser, setPersistentUser] = useState<User | null>(null);
   const [hasEverHadSession, setHasEverHadSession] = useState(false);
 
@@ -203,7 +197,7 @@ function App() {
                     ← Back to Dashboard
                   </button>
                 </div>
-                <WellnessCalculator />
+                <WellnessCalculator user={effectiveUser} />
               </div>
             );
 

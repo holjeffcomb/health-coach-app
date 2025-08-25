@@ -11,7 +11,14 @@ import { BodyCompositionForm } from "./BodyCompositionForm";
 import { TestScenarios } from "./TestScenarios";
 import { ResultsDisplay } from "./ResultsDisplay";
 
-const WellnessCalculator: React.FC = () => {
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  // Add other relevant user properties here
+}
+
+const WellnessCalculator: React.FC<{ user: User }> = ({ user }) => {
   const {
     formData,
     scores,
@@ -19,6 +26,9 @@ const WellnessCalculator: React.FC = () => {
     handleInputChange,
     loadTestScenario,
     clearForm,
+    saveAssessment,
+    isSaving,
+    lastSaved,
   } = useWellnessCalculator();
 
   return (
@@ -69,7 +79,15 @@ const WellnessCalculator: React.FC = () => {
           </div>
         </div>
 
-        <ResultsDisplay formData={formData} scores={scores} grade={grade} />
+        <ResultsDisplay
+          formData={formData}
+          scores={scores}
+          grade={grade}
+          onSave={saveAssessment}
+          isSaving={isSaving}
+          lastSaved={lastSaved}
+          user={user}
+        />
       </div>
     </div>
   );
