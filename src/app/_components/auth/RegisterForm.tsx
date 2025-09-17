@@ -1,4 +1,4 @@
-// app/_components/auth/RegisterForm.tsx
+// app/_components/auth/RegisterForm.tsx - Clean HALO Design
 "use client";
 
 import React, { useState } from "react";
@@ -9,10 +9,10 @@ import {
   Lock,
   Eye,
   EyeOff,
-  CheckCircle,
   AlertCircle,
   ArrowRight,
   Calculator,
+  ArrowLeft,
 } from "lucide-react";
 
 interface RegisterFormProps {
@@ -73,13 +73,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
     return true;
   };
 
-  // ===========================================
-  // 🔧 FIXED: Better Auth Response Handling
-  // ===========================================
-
-  // Better Auth returns either { data: {...} } or { error: {...} }
-  // We need to check for both cases properly
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -108,25 +101,19 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
         });
       }
 
-      // 🔍 CRITICAL: Log the complete response structure
       console.log("📥 Auth response received:", result);
       console.log("📋 Response type:", typeof result);
       console.log("📋 Response keys:", Object.keys(result || {}));
 
-      // 🔧 CORRECT: Check for error first (Better Auth pattern)
       if ("error" in result && result.error) {
         console.log("❌ Auth error found:", result.error);
         setError(result.error.message || "Authentication failed");
         return;
       }
 
-      // 🔧 CORRECT: Check for data property (Better Auth success pattern)
       if ("data" in result && result.data) {
         console.log("✅ Auth data found:", result.data);
-
-        // Check if we have user in the data
         const userData = result.data.user;
-
         console.log("🔍 User data:", userData);
 
         if (userData) {
@@ -137,7 +124,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
         }
       }
 
-      // 🔧 FALLBACK: If result has user/session directly (older pattern)
       if ("user" in result && result.user) {
         console.log("✅ Found user directly in result");
         setSuccess(true);
@@ -145,11 +131,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
         return;
       }
 
-      // 🚨 UNEXPECTED: No clear success or error
       console.log("⚠️ Unexpected response structure:", result);
       setError("Authentication response unclear. Please try again.");
     } catch (err: unknown) {
-      // This catch block handles thrown exceptions
       console.log("❌ Exception thrown during auth:", err);
       let errorMessage = `${isLogin ? "Login" : "Registration"} failed`;
 
@@ -179,185 +163,216 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 flex items-center justify-center px-4">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center mb-4">
-            <Calculator className="w-10 h-10 text-blue-600 mr-3" />
-            <span className="text-2xl font-bold text-gray-900">
-              WellnessScore
-            </span>
-          </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            {isLogin ? "Welcome Back" : "Create Account"}
-          </h1>
-          <p className="text-gray-600">
-            {isLogin
-              ? "Sign in to access your health dashboard"
-              : "Join thousands improving their health"}
-          </p>
-        </div>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8">
+      <div className="w-full max-w-md">
+        {/* Back to Landing */}
+        {onBackToLanding && (
+          <button
+            onClick={onBackToLanding}
+            className="flex items-center text-gray-600 hover:text-gray-900 mb-8 transition-colors group"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+            Back to home
+          </button>
+        )}
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Name fields (only for registration) */}
-          {!isLogin && (
-            <div className="grid grid-cols-2 gap-4">
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type="text"
-                  name="firstName"
-                  placeholder="First Name"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  required={!isLogin}
-                />
+        {/* Main Form Card */}
+        <div className="card">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center mb-6">
+              <div className="w-12 h-12 bg-halo-blue rounded-xl flex items-center justify-center mr-3">
+                <Calculator className="w-7 h-7 text-white" />
               </div>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type="text"
-                  name="lastName"
-                  placeholder="Last Name"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  required={!isLogin}
-                />
+              <span className="text-2xl font-semibold text-gray-900">
+                HALO Wellness
+              </span>
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-3">
+              {isLogin ? "Welcome Back" : "Create Account"}
+            </h1>
+            <p className="text-gray-600">
+              {isLogin
+                ? "Sign in to access your health dashboard"
+                : "Join thousands improving their health"}
+            </p>
+          </div>
+
+          {/* Success State */}
+          {success && (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6 text-center mb-6">
+              <div className="w-12 h-12 bg-recovery-emerald rounded-full flex items-center justify-center mx-auto mb-3">
+                <ArrowRight className="w-6 h-6 text-white" />
               </div>
+              <h3 className="font-semibold text-emerald-900 mb-1">Success!</h3>
+              <p className="text-emerald-700 text-sm">
+                {isLogin
+                  ? "Signing you in..."
+                  : "Account created successfully!"}
+              </p>
             </div>
           )}
 
-          {/* Email */}
-          <div className="relative">
-            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <input
-              type="email"
-              name="email"
-              placeholder="Email Address"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              required
-            />
-          </div>
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Name fields (only for registration) */}
+            {!isLogin && (
+              <div className="grid grid-cols-2 gap-4">
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    type="text"
+                    name="firstName"
+                    placeholder="First Name"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    className="input-field pl-10 pr-4 py-3"
+                    required={!isLogin}
+                  />
+                </div>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    type="text"
+                    name="lastName"
+                    placeholder="Last Name"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    className="input-field pl-10 pr-4 py-3"
+                    required={!isLogin}
+                  />
+                </div>
+              </div>
+            )}
 
-          {/* Password */}
-          <div className="relative">
-            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <input
-              type={showPassword ? "text" : "password"}
-              name="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              required
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-            >
-              {showPassword ? (
-                <EyeOff className="w-5 h-5" />
-              ) : (
-                <Eye className="w-5 h-5" />
-              )}
-            </button>
-          </div>
+            {/* Email */}
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="email"
+                name="email"
+                placeholder="Email Address"
+                value={formData.email}
+                onChange={handleChange}
+                className="input-field pl-10 pr-4 py-3"
+                required
+              />
+            </div>
 
-          {/* Confirm Password (only for registration) */}
-          {!isLogin && (
+            {/* Password */}
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
-                type={showConfirmPassword ? "text" : "password"}
-                name="confirmPassword"
-                placeholder="Confirm Password"
-                value={formData.confirmPassword}
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Password"
+                value={formData.password}
                 onChange={handleChange}
-                className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                required={!isLogin}
+                className="input-field pl-10 pr-12 py-3"
+                required
               />
               <button
                 type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
               >
-                {showConfirmPassword ? (
+                {showPassword ? (
                   <EyeOff className="w-5 h-5" />
                 ) : (
                   <Eye className="w-5 h-5" />
                 )}
               </button>
             </div>
-          )}
 
-          {/* Error Message */}
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center">
-              <AlertCircle className="w-5 h-5 text-red-500 mr-3 flex-shrink-0" />
-              <p className="text-red-700 text-sm">{error}</p>
-            </div>
-          )}
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3 px-4 rounded-lg font-semibold transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center group"
-          >
-            {loading ? (
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-            ) : (
-              <>
-                {isLogin ? "Sign In" : "Create Account"}
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </>
+            {/* Confirm Password (only for registration) */}
+            {!isLogin && (
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  placeholder="Confirm Password"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className="input-field pl-10 pr-12 py-3"
+                  required={!isLogin}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
             )}
-          </button>
 
-          {/* Toggle between login/register */}
-          <div className="text-center">
-            <p className="text-gray-600">
-              {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-              <button
-                type="button"
-                onClick={() => {
-                  setIsLogin(!isLogin);
-                  setError("");
-                  setFormData({
-                    firstName: "",
-                    lastName: "",
-                    email: "",
-                    password: "",
-                    confirmPassword: "",
-                  });
-                }}
-                className="text-blue-600 hover:text-blue-700 font-semibold transition-colors"
-              >
-                {isLogin ? "Sign up" : "Sign in"}
-              </button>
-            </p>
-          </div>
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start">
+                <AlertCircle className="w-5 h-5 text-red-500 mr-3 flex-shrink-0 mt-0.5" />
+                <p className="text-red-700 text-sm">{error}</p>
+              </div>
+            )}
 
-          {/* Back to landing */}
-          {onBackToLanding && (
-            <div className="text-center">
-              <button
-                type="button"
-                onClick={onBackToLanding}
-                className="text-gray-500 hover:text-gray-700 text-sm transition-colors"
-              >
-                ← Back to home
-              </button>
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading || success}
+              className="btn-primary w-full py-4 flex items-center justify-center group disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <div className="loading-spinner" />
+              ) : (
+                <>
+                  {isLogin ? "Sign In" : "Create Account"}
+                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </>
+              )}
+            </button>
+
+            {/* Toggle between login/register */}
+            <div className="text-center pt-4 border-t border-gray-100">
+              <p className="text-gray-600 text-sm">
+                {isLogin
+                  ? "Don't have an account?"
+                  : "Already have an account?"}{" "}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsLogin(!isLogin);
+                    setError("");
+                    setSuccess(false);
+                    setFormData({
+                      firstName: "",
+                      lastName: "",
+                      email: "",
+                      password: "",
+                      confirmPassword: "",
+                    });
+                  }}
+                  className="text-halo-blue hover:text-primary-600 font-medium transition-colors"
+                >
+                  {isLogin ? "Sign up" : "Sign in"}
+                </button>
+              </p>
             </div>
-          )}
-        </form>
+          </form>
+        </div>
+
+        {/* Additional Help */}
+        <div className="text-center mt-6">
+          <p className="text-gray-500 text-sm">
+            Need help?{" "}
+            <button className="text-halo-blue hover:text-primary-600 transition-colors">
+              Contact Support
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   );

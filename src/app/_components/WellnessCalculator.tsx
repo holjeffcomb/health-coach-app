@@ -54,9 +54,9 @@ const Tooltip: React.FC<{ content: string; children: React.ReactNode }> = ({
         {children}
       </div>
       {isVisible && (
-        <div className="absolute z-10 p-3 text-sm text-white bg-gray-800 rounded-lg shadow-lg w-64 bottom-full left-0 mb-2">
+        <div className="absolute z-10 p-4 text-sm text-white bg-haloNavy rounded-xl shadow-card w-64 bottom-full left-0 mb-2">
           {content}
-          <div className="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+          <div className="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-haloNavy"></div>
         </div>
       )}
     </div>
@@ -73,20 +73,20 @@ const BasicInfoForm: React.FC<{
   };
 
   return (
-    <div className="space-y-6">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+    <div className="space-y-8">
+      <div className="text-center mb-12">
+        <h2 className="text-3xl font-bold text-haloNavy mb-3 leading-tight">
           Basic Information
         </h2>
-        <p className="text-gray-600">
+        <p className="text-gray-600 leading-relaxed">
           Let&apos;s start with some basic details about you
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto">
         <div>
           <Tooltip content="Your current age in years. This helps calculate age-adjusted health metrics.">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-haloNavy mb-3">
               Age *
             </label>
           </Tooltip>
@@ -95,21 +95,21 @@ const BasicInfoForm: React.FC<{
             value={formData.age}
             onChange={(e) => onInputChange("age", e.target.value)}
             onWheel={handleWheel}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
+            className="w-full px-4 py-4 border border-calmGray rounded-xl focus:ring-2 focus:ring-haloBlue focus:border-transparent text-lg bg-white shadow-soft"
             required
           />
         </div>
 
         <div>
           <Tooltip content="Biological sex affects metabolism and health ranges. This is used for accurate calculations.">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-haloNavy mb-3">
               Sex at Birth *
             </label>
           </Tooltip>
           <select
             value={formData.sex}
             onChange={(e) => onInputChange("sex", e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
+            className="w-full px-4 py-4 border border-calmGray rounded-xl focus:ring-2 focus:ring-haloBlue focus:border-transparent text-lg bg-white shadow-soft"
             required
           >
             <option value="">Select</option>
@@ -201,12 +201,12 @@ const MetabolicHealthForm: React.FC<{
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+    <div className="space-y-8">
+      <div className="text-center mb-12">
+        <h2 className="text-3xl font-bold text-haloNavy mb-3 leading-tight">
           Metabolic Health
         </h2>
-        <p className="text-gray-600">
+        <p className="text-gray-600 leading-relaxed">
           Enter your latest lab results and blood pressure readings
         </p>
       </div>
@@ -215,7 +215,7 @@ const MetabolicHealthForm: React.FC<{
         {inputFields.map(({ key, label, step, tooltip }) => (
           <div key={key}>
             <Tooltip content={tooltip}>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-haloNavy mb-3">
                 {label}
               </label>
             </Tooltip>
@@ -225,7 +225,7 @@ const MetabolicHealthForm: React.FC<{
               value={formData[key]}
               onChange={(e) => onInputChange(key, e.target.value)}
               onWheel={handleWheel}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-4 border border-calmGray rounded-xl focus:ring-2 focus:ring-haloBlue focus:border-transparent bg-white shadow-soft"
             />
           </div>
         ))}
@@ -244,26 +244,26 @@ const FitnessForm: React.FC<{
 
   return (
     <div className="space-y-8">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+      <div className="text-center mb-12">
+        <h2 className="text-3xl font-bold text-haloNavy mb-3 leading-tight">
           Fitness Measurements
         </h2>
-        <p className="text-gray-600">
+        <p className="text-gray-600 leading-relaxed">
           These metrics provide insights into your cardiovascular and muscular
           health
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-        <div className="bg-blue-50 p-6 rounded-xl">
-          <div className="flex items-center gap-3 mb-4">
-            <Activity className="w-6 h-6" />
-            <h3 className="text-lg font-semibold text-gray-800">
-              Cardio Fitness
-            </h3>
+        <div className="bg-gradient-to-br from-emerald-50 to-recoveryEmerald/10 p-8 rounded-2xl border border-emerald-100">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-12 h-12 bg-recoveryEmerald rounded-xl flex items-center justify-center">
+              <Activity className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-haloNavy">Cardio Fitness</h3>
           </div>
           <Tooltip content="Maximum oxygen your body can use during exercise. Measures cardiovascular fitness and endurance capacity. Higher values indicate better heart health and longevity.">
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+            <label className="block text-sm font-semibold text-haloNavy mb-4">
               VO2 Max (mL/kg/min)
             </label>
           </Tooltip>
@@ -272,19 +272,19 @@ const FitnessForm: React.FC<{
             value={formData.vo2Max}
             onChange={(e) => onInputChange("vo2Max", e.target.value)}
             onWheel={handleWheel}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
+            className="w-full px-4 py-4 border border-calmGray rounded-xl focus:ring-2 focus:ring-recoveryEmerald focus:border-transparent text-lg bg-white shadow-soft"
           />
         </div>
 
-        <div className="bg-green-50 p-6 rounded-xl">
-          <div className="flex items-center gap-3 mb-4">
-            <Dumbbell className="w-6 h-6" />
-            <h3 className="text-lg font-semibold text-gray-800">
-              Muscle Strength
-            </h3>
+        <div className="bg-gradient-to-br from-gold-50 to-vitalityGold/10 p-8 rounded-2xl border border-gold-100">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-12 h-12 bg-vitalityGold rounded-xl flex items-center justify-center">
+              <Dumbbell className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-haloNavy">Muscle Strength</h3>
           </div>
           <Tooltip content="Maximum force you can generate with your hand grip. Strong predictor of overall strength, muscle mass, and longevity. Measured with a dynamometer.">
-            <label className="block text sm font-medium text-gray-700 mb-3">
+            <label className="block text-sm font-semibold text-haloNavy mb-4">
               Grip Strength (kg)
             </label>
           </Tooltip>
@@ -293,7 +293,7 @@ const FitnessForm: React.FC<{
             value={formData.gripStrength}
             onChange={(e) => onInputChange("gripStrength", e.target.value)}
             onWheel={handleWheel}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
+            className="w-full px-4 py-4 border border-calmGray rounded-xl focus:ring-2 focus:ring-vitalityGold focus:border-transparent text-lg bg-white shadow-soft"
           />
         </div>
       </div>
@@ -311,24 +311,26 @@ const BodyCompositionForm: React.FC<{
 
   return (
     <div className="space-y-8">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+      <div className="text-center mb-12">
+        <h2 className="text-3xl font-bold text-haloNavy mb-3 leading-tight">
           Body Composition
         </h2>
-        <p className="text-gray-600">
+        <p className="text-gray-600 leading-relaxed">
           These measurements help assess your body fat distribution and health
           risks
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-        <div className="bg-purple-50 p-6 rounded-xl">
-          <div className="flex items-center gap-3 mb-4">
-            <Scale className="w-6 h-6" />
-            <h3 className="text-lg font-semibold text-gray-800">Body Fat</h3>
+        <div className="bg-gradient-to-br from-indigo-50 to-accentIndigo/10 p-8 rounded-2xl border border-indigo-100">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-12 h-12 bg-accentIndigo rounded-xl flex items-center justify-center">
+              <Scale className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-haloNavy">Body Fat</h3>
           </div>
           <Tooltip content="Percentage of your body weight that is fat tissue. Healthy ranges: Men 10-20%, Women 16-24%. Lower isn't always better - essential fat is needed for health.">
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+            <label className="block text-sm font-semibold text-haloNavy mb-4">
               Body Fat (%)
             </label>
           </Tooltip>
@@ -338,19 +340,19 @@ const BodyCompositionForm: React.FC<{
             value={formData.bodyFat}
             onChange={(e) => onInputChange("bodyFat", e.target.value)}
             onWheel={handleWheel}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
+            className="w-full px-4 py-4 border border-calmGray rounded-xl focus:ring-2 focus:ring-accentIndigo focus:border-transparent text-lg bg-white shadow-soft"
           />
         </div>
 
-        <div className="bg-orange-50 p-6 rounded-xl">
-          <div className="flex items-center gap-3 mb-4">
-            <Heart className="w-6 h-6" />
-            <h3 className="text-lg font-semibold text-gray-800">
-              Visceral Fat
-            </h3>
+        <div className="bg-gradient-to-br from-rose-50 to-accentRose/10 p-8 rounded-2xl border border-rose-100">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-12 h-12 bg-accentRose rounded-xl flex items-center justify-center">
+              <Heart className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-haloNavy">Visceral Fat</h3>
           </div>
           <Tooltip content="Fat around internal organs. Measured by DEXA or bioelectrical impedance. Healthy: <10. High visceral fat increases risk of diabetes and heart disease.">
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+            <label className="block text-sm font-semibold text-haloNavy mb-4">
               Visceral Fat Rating
             </label>
           </Tooltip>
@@ -359,7 +361,7 @@ const BodyCompositionForm: React.FC<{
             value={formData.visceralFat}
             onChange={(e) => onInputChange("visceralFat", e.target.value)}
             onWheel={handleWheel}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
+            className="w-full px-4 py-4 border border-calmGray rounded-xl focus:ring-2 focus:ring-accentRose focus:border-transparent text-lg bg-white shadow-soft"
           />
         </div>
       </div>
@@ -369,8 +371,6 @@ const BodyCompositionForm: React.FC<{
 
 // Main Multi-Step Component
 const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
-  // Use email just to avoid "unused var" warnings and to confirm who’s filling the calculator.
-  // Remove this banner if you don’t want it.
   const [showUserBanner] = useState(true);
 
   const [currentStep, setCurrentStep] = useState(0);
@@ -527,27 +527,29 @@ const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
   const CurrentStepComponent = steps[currentStep].component;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-calmGray">
       <div className="flex">
         {/* Sidebar */}
-        <div className="w-80 min-h-screen bg-white shadow-lg">
-          <div className="p-6 border-b">
-            <div className="flex items-center gap-3 mb-4">
-              <Calculator className="w-8 h-8 text-blue-600" />
-              <h1 className="text-xl font-bold text-gray-800">
-                Wellness Calculator
+        <div className="w-80 min-h-screen bg-white shadow-card">
+          <div className="p-8 border-b border-calmGray">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-10 h-10 bg-haloBlue rounded-xl flex items-center justify-center">
+                <Calculator className="w-6 h-6 text-white" />
+              </div>
+              <h1 className="text-xl font-bold text-haloNavy leading-tight">
+                HALO Wellness
               </h1>
             </div>
 
             {showUserBanner && (
-              <div className="text-xs text-gray-600 mb-3">
-                Logged in as <span className="font-semibold">{user.email}</span>
+              <div className="text-sm text-gray-600 mb-6 p-3 bg-calmGray rounded-lg">
+                <span className="font-medium text-haloNavy">{user.email}</span>
               </div>
             )}
 
             <button
               onClick={clearForm}
-              className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors w-full justify-center mb-4"
+              className="flex items-center gap-3 px-4 py-3 bg-calmGray hover:bg-gray-200 text-haloNavy rounded-xl text-sm font-medium transition-colors w-full justify-center mb-4"
             >
               <RotateCcw className="w-4 h-4" />
               Clear Form
@@ -556,15 +558,15 @@ const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
             {areAllStepsComplete() && (
               <button
                 onClick={handleSubmit}
-                className="flex items-center gap-2 px-4 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-colors w-full justify-center"
+                className="flex items-center gap-3 px-4 py-4 bg-recoveryEmerald hover:bg-emerald-500 text-white rounded-xl font-semibold transition-colors w-full justify-center shadow-soft"
               >
-                <Check className="w-4 h-4" />
+                <Check className="w-5 h-5" />
                 Submit Assessment
               </button>
             )}
           </div>
 
-          <div className="p-6">
+          <div className="p-8">
             <div className="space-y-4">
               {steps.map((step, index) => {
                 const Icon = step.icon;
@@ -576,41 +578,41 @@ const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
                   <button
                     key={index}
                     onClick={() => goToStep(index)}
-                    className={`w-full flex items-center gap-4 p-4 rounded-lg transition-all ${
+                    className={`w-full flex items-center gap-4 p-4 rounded-xl transition-all ${
                       isCurrent
-                        ? "bg-blue-100 border-2 border-blue-300"
+                        ? "bg-primary-50 border-2 border-haloBlue shadow-soft"
                         : isComplete
-                        ? "bg-green-50 hover:bg-green-100 border border-green-200"
+                        ? "bg-emerald-50 hover:bg-emerald-100 border border-recoveryEmerald/20"
                         : isPartial
-                        ? "bg-yellow-50 hover:bg-yellow-100 border border-yellow-200"
-                        : "bg-gray-50 hover:bg-gray-100 border border-gray-200"
+                        ? "bg-gold-50 hover:bg-gold-100 border border-vitalityGold/20"
+                        : "bg-calmGray hover:bg-gray-100 border border-gray-200"
                     }`}
                   >
                     <div
-                      className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
+                      className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center ${
                         isCurrent
-                          ? "bg-blue-500 text-white"
+                          ? "bg-haloBlue text-white"
                           : isComplete
-                          ? "bg-green-500 text-white"
+                          ? "bg-recoveryEmerald text-white"
                           : isPartial
-                          ? "bg-yellow-500 text-white"
+                          ? "bg-vitalityGold text-white"
                           : "bg-gray-300 text-gray-600"
                       }`}
                     >
                       {isComplete ? (
-                        <Check className="w-5 h-5" />
+                        <Check className="w-6 h-6" />
                       ) : (
-                        <Icon className="w-5 h-5" />
+                        <Icon className="w-6 h-6" />
                       )}
                     </div>
                     <div className="text-left">
                       <div
-                        className={`font-medium ${
+                        className={`font-semibold ${
                           isCurrent
-                            ? "text-blue-800"
+                            ? "text-haloBlue"
                             : isComplete
-                            ? "text-green-800"
-                            : "text-gray-700"
+                            ? "text-recoveryEmerald"
+                            : "text-haloNavy"
                         }`}
                       >
                         {step.title}
@@ -622,7 +624,7 @@ const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
                     {!isComplete &&
                       !isCurrent &&
                       step.requiredFields.length > 0 && (
-                        <AlertCircle className="w-4 h-4 text-gray-400 ml-auto" />
+                        <AlertCircle className="w-5 h-5 text-gray-400 ml-auto" />
                       )}
                   </button>
                 );
@@ -636,19 +638,19 @@ const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
           <div className="p-8">
             <div className="max-w-6xl mx-auto">
               {/* Progress Bar */}
-              <div className="mb-8">
-                <div className="flex justify-between text-sm text-gray-600 mb-2">
-                  <span>
+              <div className="mb-12">
+                <div className="flex justify-between text-sm text-gray-600 mb-3">
+                  <span className="font-medium">
                     Step {currentStep + 1} of {steps.length}
                   </span>
-                  <span>
+                  <span className="font-medium">
                     {Math.round(((currentStep + 1) / steps.length) * 100)}%
                     Complete
                   </span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-gray-200 rounded-full h-3">
                   <div
-                    className="h-2 rounded-full transition-all duration-500 ease-out bg-blue-500"
+                    className="h-3 rounded-full transition-all duration-500 ease-out bg-gradient-to-r from-haloBlue to-recoveryEmerald"
                     style={{
                       width: `${((currentStep + 1) / steps.length) * 100}%`,
                     }}
@@ -657,7 +659,7 @@ const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
               </div>
 
               {/* Step Content */}
-              <div className="bg-white rounded-xl shadow-lg p-8 mb-8 min-h-[600px] transition-all duration-300">
+              <div className="bg-white rounded-2xl shadow-card p-12 mb-8 min-h-[600px] transition-all duration-300">
                 <CurrentStepComponent
                   formData={formData}
                   onInputChange={handleInputChange}
@@ -669,18 +671,18 @@ const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
                 <button
                   onClick={prevStep}
                   disabled={currentStep === 0}
-                  className="flex items-center gap-2 px-6 py-3 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 text-gray-700 rounded-lg font-medium transition-colors"
+                  className="flex items-center gap-3 px-6 py-4 bg-calmGray hover:bg-gray-200 disabled:bg-gray-100 disabled:text-gray-400 text-haloNavy rounded-xl font-medium transition-colors"
                 >
-                  <ChevronLeft className="w-4 h-4" />
+                  <ChevronLeft className="w-5 h-5" />
                   Previous
                 </button>
 
                 <div className="text-center">
                   {!canProceedToNext() &&
                     steps[currentStep].requiredFields.length > 0 && (
-                      <div className="flex items-center gap-2 text-amber-600 bg-amber-50 px-4 py-2 rounded-lg">
-                        <AlertCircle className="w-4 h-4" />
-                        <span className="text-sm">
+                      <div className="flex items-center gap-3 text-amber-700 bg-amber-50 px-6 py-3 rounded-xl border border-amber-200">
+                        <AlertCircle className="w-5 h-5" />
+                        <span className="text-sm font-medium">
                           Please fill in the required fields
                         </span>
                       </div>
@@ -691,23 +693,23 @@ const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
                   <button
                     onClick={handleSubmit}
                     disabled={!areAllStepsComplete()}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors ${
+                    className={`flex items-center gap-3 px-6 py-4 rounded-xl font-semibold transition-colors ${
                       areAllStepsComplete()
-                        ? "bg-green-500 hover:bg-green-600 text-white"
+                        ? "bg-recoveryEmerald hover:bg-emerald-500 text-white shadow-soft"
                         : "bg-gray-300 text-gray-500 cursor-not-allowed"
                     }`}
                   >
-                    <Check className="w-4 h-4" />
+                    <Check className="w-5 h-5" />
                     Submit Assessment
                   </button>
                 ) : (
                   <button
                     onClick={nextStep}
                     disabled={currentStep === steps.length - 1}
-                    className="flex items-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:text-gray-500 text-white rounded-lg font-medium transition-colors"
+                    className="flex items-center gap-3 px-6 py-4 bg-haloBlue hover:bg-primary-600 disabled:bg-gray-300 disabled:text-gray-500 text-white rounded-xl font-semibold transition-colors shadow-soft"
                   >
                     Next
-                    <ChevronRight className="w-4 h-4" />
+                    <ChevronRight className="w-5 h-5" />
                   </button>
                 )}
               </div>
