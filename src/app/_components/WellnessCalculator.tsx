@@ -1,3 +1,4 @@
+// app/_components/WellnessCalculator.tsx
 import React, { useState } from "react";
 import {
   Calculator,
@@ -11,6 +12,7 @@ import {
   Dumbbell,
   Scale,
 } from "lucide-react";
+import type { User } from "../types/wellness";
 
 // Types
 interface FormData {
@@ -31,6 +33,10 @@ interface FormData {
   bodyFat: string;
   visceralFat: string;
 }
+
+type WellnessCalculatorProps = {
+  user: User; // required; App renders this only when a user exists
+};
 
 // Tooltip Component
 const Tooltip: React.FC<{ content: string; children: React.ReactNode }> = ({
@@ -251,7 +257,7 @@ const FitnessForm: React.FC<{
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
         <div className="bg-blue-50 p-6 rounded-xl">
           <div className="flex items-center gap-3 mb-4">
-            <Activity className="w-6 h-6 text-blue-600" />
+            <Activity className="w-6 h-6" />
             <h3 className="text-lg font-semibold text-gray-800">
               Cardio Fitness
             </h3>
@@ -272,13 +278,13 @@ const FitnessForm: React.FC<{
 
         <div className="bg-green-50 p-6 rounded-xl">
           <div className="flex items-center gap-3 mb-4">
-            <Dumbbell className="w-6 h-6 text-green-600" />
+            <Dumbbell className="w-6 h-6" />
             <h3 className="text-lg font-semibold text-gray-800">
               Muscle Strength
             </h3>
           </div>
           <Tooltip content="Maximum force you can generate with your hand grip. Strong predictor of overall strength, muscle mass, and longevity. Measured with a dynamometer.">
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+            <label className="block text sm font-medium text-gray-700 mb-3">
               Grip Strength (kg)
             </label>
           </Tooltip>
@@ -318,7 +324,7 @@ const BodyCompositionForm: React.FC<{
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
         <div className="bg-purple-50 p-6 rounded-xl">
           <div className="flex items-center gap-3 mb-4">
-            <Scale className="w-6 h-6 text-purple-600" />
+            <Scale className="w-6 h-6" />
             <h3 className="text-lg font-semibold text-gray-800">Body Fat</h3>
           </div>
           <Tooltip content="Percentage of your body weight that is fat tissue. Healthy ranges: Men 10-20%, Women 16-24%. Lower isn't always better - essential fat is needed for health.">
@@ -338,7 +344,7 @@ const BodyCompositionForm: React.FC<{
 
         <div className="bg-orange-50 p-6 rounded-xl">
           <div className="flex items-center gap-3 mb-4">
-            <Heart className="w-6 h-6 text-orange-600" />
+            <Heart className="w-6 h-6" />
             <h3 className="text-lg font-semibold text-gray-800">
               Visceral Fat
             </h3>
@@ -362,7 +368,11 @@ const BodyCompositionForm: React.FC<{
 };
 
 // Main Multi-Step Component
-const MultiStepWellnessCalculator: React.FC = () => {
+const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
+  // Use email just to avoid "unused var" warnings and to confirm who’s filling the calculator.
+  // Remove this banner if you don’t want it.
+  const [showUserBanner] = useState(true);
+
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<FormData>({
     age: "",
@@ -421,15 +431,12 @@ const MultiStepWellnessCalculator: React.FC = () => {
   const isStepComplete = (stepIndex: number) => {
     const step = steps[stepIndex];
 
-    // For steps with required fields, check that all required fields are filled
     if (step.requiredFields.length > 0) {
       return step.requiredFields.every(
         (field) => formData[field].trim() !== ""
       );
     }
 
-    // For optional steps, only consider complete if user has filled some fields
-    // AND we want to be more restrictive about what counts as "complete"
     const stepFields: (keyof FormData)[] =
       stepIndex === 1
         ? [
@@ -448,7 +455,6 @@ const MultiStepWellnessCalculator: React.FC = () => {
         ? ["vo2Max", "gripStrength"]
         : ["bodyFat", "visceralFat"];
 
-    // Only show as complete if at least half the fields are filled
     const filledFields = stepFields.filter(
       (field) => formData[field].trim() !== ""
     );
@@ -479,16 +485,11 @@ const MultiStepWellnessCalculator: React.FC = () => {
     return stepFields.some((field) => formData[field].trim() !== "");
   };
 
-  const areAllStepsComplete = () => {
-    return steps.every((_, index) => isStepComplete(index));
-  };
+  const areAllStepsComplete = () => steps.every((_, i) => isStepComplete(i));
 
-  const canProceedToNext = () => {
-    return (
-      isStepComplete(currentStep) ||
-      steps[currentStep].requiredFields.length === 0
-    );
-  };
+  const canProceedToNext = () =>
+    isStepComplete(currentStep) ||
+    steps[currentStep].requiredFields.length === 0;
 
   const handleSubmit = () => {
     if (areAllStepsComplete()) {
@@ -496,24 +497,13 @@ const MultiStepWellnessCalculator: React.FC = () => {
     }
   };
 
-  const goToStep = (stepIndex: number) => {
-    setCurrentStep(stepIndex);
-  };
-
-  const nextStep = () => {
-    if (currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1);
-    }
-  };
-
-  const prevStep = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
+  const goToStep = (i: number) => setCurrentStep(i);
+  const nextStep = () =>
+    currentStep < steps.length - 1 && setCurrentStep(currentStep + 1);
+  const prevStep = () => currentStep > 0 && setCurrentStep(currentStep - 1);
 
   const clearForm = () => {
-    const emptyFormData: FormData = {
+    setFormData({
       age: "",
       sex: "",
       a1c: "",
@@ -530,8 +520,7 @@ const MultiStepWellnessCalculator: React.FC = () => {
       gripStrength: "",
       bodyFat: "",
       visceralFat: "",
-    };
-    setFormData(emptyFormData);
+    });
     setCurrentStep(0);
   };
 
@@ -549,6 +538,13 @@ const MultiStepWellnessCalculator: React.FC = () => {
                 Wellness Calculator
               </h1>
             </div>
+
+            {showUserBanner && (
+              <div className="text-xs text-gray-600 mb-3">
+                Logged in as <span className="font-semibold">{user.email}</span>
+              </div>
+            )}
+
             <button
               onClick={clearForm}
               className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors w-full justify-center mb-4"
@@ -652,7 +648,7 @@ const MultiStepWellnessCalculator: React.FC = () => {
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
-                    className="bg-blue-500 h-2 rounded-full transition-all duration-500 ease-out"
+                    className="h-2 rounded-full transition-all duration-500 ease-out bg-blue-500"
                     style={{
                       width: `${((currentStep + 1) / steps.length) * 100}%`,
                     }}
@@ -723,4 +719,4 @@ const MultiStepWellnessCalculator: React.FC = () => {
   );
 };
 
-export default MultiStepWellnessCalculator;
+export default WellnessCalculator;
