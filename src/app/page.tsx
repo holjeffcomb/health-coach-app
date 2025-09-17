@@ -144,10 +144,8 @@ export default function App() {
   const showDebugInfo = process.env.NODE_ENV === "development";
 
   const debugOverlay = showDebugInfo && (
-    <div className="fixed top-0 right-0 bg-black bg-opacity-80 text-white p-2 text-xs z-50 max-w-xs">
-      <div>
-        <strong>Debug Info:</strong>
-      </div>
+    <div className="fixed top-0 right-0 bg-haloNavy bg-opacity-90 text-white p-3 text-xs z-50 max-w-xs rounded-bl-xl">
+      <div className="font-semibold mb-2">HALO Debug</div>
       <div>Session: {session ? "✅" : "❌"}</div>
       <div>Persistent: {persistentUser ? "✅" : "❌"}</div>
       <div>
@@ -159,7 +157,7 @@ export default function App() {
       <div>Page: {currentPage}</div>
       <div>Pending: {isPending ? "yes" : "no"}</div>
       <div>Ever had session: {hasEverHadSession ? "yes" : "no"}</div>
-      {error && <div>Error: {error.message}</div>}
+      {error && <div className="text-accentRose">Error: {error.message}</div>}
     </div>
   );
 
@@ -167,12 +165,13 @@ export default function App() {
 
   if (isPending && !persistentUser) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 flex items-center justify-center">
-        <div className="text-white text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4" />
-          <p>Loading...</p>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="loading-spinner mx-auto mb-6" />
+          <h3 className="text-2xl font-semibold mb-2 text-gray-900">HALO</h3>
+          <p className="text-gray-500">Initializing your wellness journey...</p>
           {showDebugInfo && (
-            <div className="mt-4 text-sm opacity-75">
+            <div className="mt-6 text-sm text-gray-400 bg-gray-50 rounded-lg p-3">
               <p>Checking session...</p>
             </div>
           )}
@@ -204,10 +203,10 @@ export default function App() {
         <>
           {debugOverlay}
           <div>
-            <div className="p-4 bg-white border-b">
+            <div className="p-6 bg-white border-b border-calmGray">
               <button
                 onClick={handleBackToDashboard}
-                className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                className="text-haloBlue hover:text-primary-600 text-sm font-semibold transition-colors"
               >
                 ← Back to Dashboard
               </button>
