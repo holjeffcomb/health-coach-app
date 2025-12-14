@@ -13,6 +13,8 @@ import {
   Scale,
   BadgeCheck,
   XCircle,
+  Heart,
+  Ruler,
 } from "lucide-react";
 import type { User } from "../types/wellness";
 import { calculateScores, getGradeFromScore } from "../utils/scoringUtils";
@@ -21,6 +23,8 @@ import type { FormData, Scores, Grade } from "../types/wellness";
 // Extended FormData for the component (includes visceralFat for UI)
 interface ExtendedFormData extends FormData {
   visceralFat: string;
+  height: string;
+  weight: string;
 }
 
 type WellnessCalculatorProps = {
@@ -43,9 +47,9 @@ const Tooltip: React.FC<{ content: string; children: React.ReactNode }> = ({
         {children}
       </div>
       {isVisible && (
-        <div className="absolute z-10 p-4 text-sm text-white bg-haloNavy rounded-xl shadow-card w-64 bottom-full left-0 mb-2">
+        <div className="absolute z-10 p-4 text-sm text-white bg-slate-800 rounded-xl shadow-lg w-64 bottom-full left-0 mb-2 border border-slate-700">
           {content}
-          <div className="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-haloNavy"></div>
+          <div className="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-800"></div>
         </div>
       )}
     </div>
@@ -311,15 +315,61 @@ const BodyCompositionForm: React.FC<{
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-        <div className="bg-gradient-to-br from-indigo-50 to-accentIndigo/10 p-8 rounded-2xl border border-indigo-100">
+        <div className="bg-slate-100 border border-slate-300 p-8 rounded-2xl shadow-md">
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-12 h-12 bg-accentIndigo rounded-xl flex items-center justify-center">
-              <Scale className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 bg-gradient-to-br from-slate-600 to-slate-700 rounded-xl flex items-center justify-center shadow-md">
+              <Ruler className="w-6 h-6 text-white" strokeWidth={2} />
             </div>
-            <h3 className="text-xl font-bold text-haloNavy">Body Fat</h3>
+            <h3 className="text-xl font-bold text-gray-900">Height</h3>
+          </div>
+          <Tooltip content="Your height in centimeters or inches. Used for BMI calculations and body composition analysis.">
+            <label className="block text-sm font-semibold text-gray-700 mb-4">
+              Height (cm)
+            </label>
+          </Tooltip>
+          <input
+            type="number"
+            step="0.1"
+            value={formData.height}
+            onChange={(e) => onInputChange("height", e.target.value)}
+            onWheel={handleWheel}
+            className="w-full px-4 py-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent text-lg bg-white shadow-sm"
+            placeholder="175"
+          />
+        </div>
+
+        <div className="bg-slate-100 border border-slate-300 p-8 rounded-2xl shadow-md">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-12 h-12 bg-gradient-to-br from-slate-600 to-slate-700 rounded-xl flex items-center justify-center shadow-md">
+              <Scale className="w-6 h-6 text-white" strokeWidth={2} />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900">Weight</h3>
+          </div>
+          <Tooltip content="Your body weight in kilograms or pounds. Used for BMI calculations and body composition analysis.">
+            <label className="block text-sm font-semibold text-gray-700 mb-4">
+              Weight (kg)
+            </label>
+          </Tooltip>
+          <input
+            type="number"
+            step="0.1"
+            value={formData.weight}
+            onChange={(e) => onInputChange("weight", e.target.value)}
+            onWheel={handleWheel}
+            className="w-full px-4 py-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent text-lg bg-white shadow-sm"
+            placeholder="75"
+          />
+        </div>
+
+        <div className="bg-slate-100 border border-slate-300 p-8 rounded-2xl shadow-md">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-12 h-12 bg-gradient-to-br from-slate-600 to-slate-700 rounded-xl flex items-center justify-center shadow-md">
+              <Activity className="w-6 h-6 text-white" strokeWidth={2} />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900">Body Fat</h3>
           </div>
           <Tooltip content="Percentage of your body weight that is fat tissue. Healthy ranges: Men 10-20%, Women 16-24%. Lower isn't always better - essential fat is needed for health.">
-            <label className="block text-sm font-semibold text-haloNavy mb-4">
+            <label className="block text-sm font-semibold text-gray-700 mb-4">
               Body Fat (%)
             </label>
           </Tooltip>
@@ -329,19 +379,19 @@ const BodyCompositionForm: React.FC<{
             value={formData.bodyFat}
             onChange={(e) => onInputChange("bodyFat", e.target.value)}
             onWheel={handleWheel}
-            className="w-full px-4 py-4 border border-calmGray rounded-xl focus:ring-2 focus:ring-accentIndigo focus:border-transparent text-lg bg-white shadow-soft"
+            className="w-full px-4 py-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent text-lg bg-white shadow-sm"
           />
         </div>
 
-        <div className="bg-gradient-to-br from-rose-50 to-accentRose/10 p-8 rounded-2xl border border-rose-100">
+        <div className="bg-slate-100 border border-slate-300 p-8 rounded-2xl shadow-md">
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-12 h-12 bg-accentRose rounded-xl flex items-center justify-center">
-              <Heart className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 bg-gradient-to-br from-slate-600 to-slate-700 rounded-xl flex items-center justify-center shadow-md">
+              <Heart className="w-6 h-6 text-white" strokeWidth={2} />
             </div>
-            <h3 className="text-xl font-bold text-haloNavy">Visceral Fat</h3>
+            <h3 className="text-xl font-bold text-gray-900">Visceral Fat</h3>
           </div>
           <Tooltip content="Fat around internal organs. Measured by DEXA or bioelectrical impedance. Healthy: <10. High visceral fat increases risk of diabetes and heart disease.">
-            <label className="block text-sm font-semibold text-haloNavy mb-4">
+            <label className="block text-sm font-semibold text-gray-700 mb-4">
               Visceral Fat Rating
             </label>
           </Tooltip>
@@ -350,7 +400,7 @@ const BodyCompositionForm: React.FC<{
             value={formData.visceralFat}
             onChange={(e) => onInputChange("visceralFat", e.target.value)}
             onWheel={handleWheel}
-            className="w-full px-4 py-4 border border-calmGray rounded-xl focus:ring-2 focus:ring-accentRose focus:border-transparent text-lg bg-white shadow-soft"
+            className="w-full px-4 py-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent text-lg bg-white shadow-sm"
           />
         </div>
       </div>
@@ -381,6 +431,8 @@ const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
     bodyFat: "",
     smm: "",
     visceralFat: "",
+    height: "",
+    weight: "",
   });
 
   // Calculate scores and grade from form data
@@ -406,21 +458,37 @@ const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
       title: "Metabolic Health",
       icon: Activity,
       component: MetabolicHealthForm,
-      requiredFields: [] as (keyof ExtendedFormData)[],
+      requiredFields: [
+        "a1c",
+        "ldl",
+        "triglycerides",
+        "totalCholesterol",
+        "hdl",
+        "lpa",
+        "apoB",
+        "systolic",
+        "diastolic",
+        "waistHeightRatio",
+      ] as (keyof ExtendedFormData)[],
       description: "Lab results & vitals",
     },
     {
       title: "Fitness",
       icon: Activity,
       component: FitnessForm,
-      requiredFields: [] as (keyof ExtendedFormData)[],
+      requiredFields: ["vo2Max", "gripStrength"] as (keyof ExtendedFormData)[],
       description: "Performance metrics",
     },
     {
       title: "Body Composition",
       icon: Scale,
       component: BodyCompositionForm,
-      requiredFields: [] as (keyof ExtendedFormData)[],
+      requiredFields: [
+        "height",
+        "weight",
+        "bodyFat",
+        "visceralFat",
+      ] as (keyof ExtendedFormData)[],
       description: "Body analysis",
     },
   ];
@@ -431,35 +499,10 @@ const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
 
   const isStepComplete = (stepIndex: number) => {
     const step = steps[stepIndex];
-
-    // For steps with required fields, check that all required fields are filled
-    if (step.requiredFields.length > 0) {
-      return step.requiredFields.every(
-        (field) => formData[field].trim() !== ""
-      );
-    }
-
-    // For steps without explicit required fields, check ALL fields in that step
-    const stepFields: (keyof ExtendedFormData)[] =
-      stepIndex === 1
-        ? [
-            "a1c",
-            "ldl",
-            "triglycerides",
-            "totalCholesterol",
-            "hdl",
-            "lpa",
-            "apoB",
-            "systolic",
-            "diastolic",
-            "waistHeightRatio",
-          ]
-        : stepIndex === 2
-        ? ["vo2Max", "gripStrength"]
-        : ["bodyFat", "visceralFat"];
-
-    // Require ALL fields to be filled for the step to be considered complete
-    return stepFields.every((field) => formData[field].trim() !== "");
+    // All steps now have requiredFields defined, so check that all required fields are filled
+    return step.requiredFields.every(
+      (field) => formData[field].trim() !== ""
+    );
   };
 
   const isStepPartiallyComplete = (stepIndex: number) => {
@@ -488,9 +531,7 @@ const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
 
   const areAllStepsComplete = () => steps.every((_, i) => isStepComplete(i));
 
-  const canProceedToNext = () =>
-    isStepComplete(currentStep) ||
-    steps[currentStep].requiredFields.length === 0;
+  const canProceedToNext = () => isStepComplete(currentStep);
 
   const handleSubmit = async () => {
     if (!areAllStepsComplete()) {
@@ -589,6 +630,8 @@ const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
       bodyFat: "",
       smm: "",
       visceralFat: "",
+      height: "",
+      weight: "",
     });
     setCurrentStep(0);
     setSaveStatus(null);
@@ -770,7 +813,11 @@ const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
                     Step {currentStep + 1} of {steps.length}
                   </span>
                   <span className="font-medium">
-                    {Math.round(((currentStep + 1) / steps.length) * 100)}%
+                    {Math.round(
+                      (steps.filter((_, i) => isStepComplete(i)).length /
+                        steps.length) *
+                        100
+                    )}%
                     Complete
                   </span>
                 </div>
@@ -778,7 +825,11 @@ const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
                   <div
                     className="h-3 rounded-full transition-all duration-500 ease-out bg-gradient-to-r from-haloBlue to-recoveryEmerald"
                     style={{
-                      width: `${((currentStep + 1) / steps.length) * 100}%`,
+                      width: `${
+                        (steps.filter((_, i) => isStepComplete(i)).length /
+                          steps.length) *
+                        100
+                      }%`,
                     }}
                   />
                 </div>
@@ -804,15 +855,14 @@ const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
                 </button>
 
                 <div className="text-center">
-                  {!canProceedToNext() &&
-                    steps[currentStep].requiredFields.length > 0 && (
-                      <div className="flex items-center gap-3 text-amber-700 bg-amber-50 px-6 py-3 rounded-xl border border-amber-200">
-                        <AlertCircle className="w-5 h-5" />
-                        <span className="text-sm font-medium">
-                          Please fill in the required fields
-                        </span>
-                      </div>
-                    )}
+                  {!canProceedToNext() && (
+                    <div className="flex items-center gap-3 text-amber-700 bg-amber-50 px-6 py-3 rounded-xl border border-amber-200">
+                      <AlertCircle className="w-5 h-5" />
+                      <span className="text-sm font-medium">
+                        Please complete all fields before proceeding
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 {currentStep === steps.length - 1 ? (
