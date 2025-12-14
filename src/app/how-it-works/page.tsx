@@ -7,7 +7,6 @@ import {
   Activity,
   Stethoscope,
   Gauge,
-  TrendingUp,
   BadgeCheck,
   ArrowLeft,
   Sparkles,
@@ -243,7 +242,7 @@ export default function HowItWorksPage() {
                     <h3 className="text-2xl font-bold text-gray-900">Step 4: Body Composition</h3>
                   </div>
                   <p className="text-gray-700 mb-4">
-                    Analyzes your body's composition to assess metabolic health and muscle mass,
+                    Analyzes your body&apos;s composition to assess metabolic health and muscle mass,
                     both crucial for longevity and functional independence.
                   </p>
                   <div className="bg-slate-100 rounded-lg p-4">
@@ -292,12 +291,12 @@ export default function HowItWorksPage() {
                 <p className="text-gray-700 mb-4">
                   Unlike binary pass/fail systems, HALO uses linear interpolation between
                   thresholds to provide precise scoring. This means your score reflects exactly
-                  where you fall within each range, not just which category you're in.
+                  where you fall within each range, not just which category you&apos;re in.
                 </p>
                 <div className="bg-slate-100 rounded-lg p-4">
                   <p className="text-sm text-gray-700">
                     <strong>Example:</strong> If your LDL is 85 mg/dL (between optimal 70 and
-                    good 99), you'll receive a score between 95-85, calculated proportionally.
+                    good 99), you&apos;ll receive a score between 95-85, calculated proportionally.
                     This provides more accurate and actionable feedback than simple category
                     assignments.
                   </p>

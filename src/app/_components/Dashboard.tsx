@@ -1,18 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { signOut } from "@/lib/auth-client";
 import {
   Sparkles,
   BadgeCheck,
   UserCircle,
-  Mail,
-  Calendar,
   ArrowRight,
-  TrendingUp,
-  Activity,
-  Gauge,
-  Zap,
 } from "lucide-react";
 import AssessmentsList from "./AssessmentsList";
 

@@ -8,7 +8,6 @@ import {
   Check,
   AlertCircle,
   Activity,
-  Gauge,
   Dumbbell,
   Scale,
   BadgeCheck,

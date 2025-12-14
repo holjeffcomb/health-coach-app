@@ -13,7 +13,7 @@ type PageState = "landing" | "register" | "calculator" | "dashboard";
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<PageState>("landing");
-  const { data: session, isPending, error } = useSession();
+  const { data: session, isPending } = useSession();
 
   // We persist the user shape expected by WellnessCalculator/Dashboard.
   // If your auth client user shape differs, adjust in normalizeUser().
