@@ -1,6 +1,6 @@
 // components/AssessmentsList.tsx
 import React, { useState, useEffect } from "react";
-import { Calendar, BarChart3, Eye, Loader2 } from "lucide-react";
+import { Calendar, TrendingUp, Eye, Loader2 } from "lucide-react";
 import AssessmentModal from "./AssessmentModal";
 import { Assessment } from "../types/wellness";
 
@@ -65,7 +65,7 @@ const AssessmentsList: React.FC<AssessmentsListProps> = ({ userId }) => {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-xl shadow-lg p-6">
+      <div className="bg-slate-100 rounded-xl shadow-lg p-6">
         <div className="flex items-center justify-center py-8">
           <Loader2 className="w-6 h-6 animate-spin text-blue-500 mr-2" />
           <span className="text-gray-600">Loading your assessments...</span>
@@ -76,9 +76,9 @@ const AssessmentsList: React.FC<AssessmentsListProps> = ({ userId }) => {
 
   if (error) {
     return (
-      <div className="bg-white rounded-xl shadow-lg p-6">
+      <div className="bg-slate-100 rounded-xl shadow-lg p-6">
         <div className="text-center py-8">
-          <div className="text-red-600 mb-2">⚠️ {error}</div>
+          <div className="text-red-600 mb-2">{error}</div>
           <button
             onClick={fetchAssessments}
             className="text-blue-600 hover:text-blue-800 text-sm font-medium"
@@ -92,9 +92,11 @@ const AssessmentsList: React.FC<AssessmentsListProps> = ({ userId }) => {
 
   return (
     <>
-      <div className="bg-white rounded-xl shadow-lg p-6">
+      <div className="bg-slate-100 rounded-xl shadow-lg p-6">
         <div className="flex items-center mb-6">
-          <BarChart3 className="w-6 h-6 text-blue-600 mr-3" />
+          <div className="w-8 h-8 bg-gradient-to-br from-slate-500 to-slate-600 rounded-lg flex items-center justify-center mr-3">
+            <TrendingUp className="w-5 h-5 text-white" strokeWidth={2} />
+          </div>
           <h2 className="text-xl font-semibold text-gray-900">
             Your Assessment History
           </h2>
@@ -105,7 +107,7 @@ const AssessmentsList: React.FC<AssessmentsListProps> = ({ userId }) => {
 
         {assessments.length === 0 ? (
           <div className="text-center py-12">
-            <BarChart3 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <TrendingUp className="w-16 h-16 text-gray-300 mx-auto mb-4" strokeWidth={1.5} />
             <h3 className="text-lg font-semibold text-gray-600 mb-2">
               No assessments yet
             </h3>
@@ -149,7 +151,7 @@ const AssessmentsList: React.FC<AssessmentsListProps> = ({ userId }) => {
 
                   <div className="flex items-center gap-2">
                     <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                      <Eye className="w-5 h-5" />
+                      <Eye className="w-5 h-5" strokeWidth={2} />
                     </button>
                   </div>
                 </div>
