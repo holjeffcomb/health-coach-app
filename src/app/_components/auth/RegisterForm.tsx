@@ -82,18 +82,14 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
     setError("");
 
     try {
-      console.log("🔄 Starting auth request...");
-
       let result;
 
       if (isLogin) {
-        console.log("🔄 Calling signIn.email...");
         result = await signIn.email({
           email: formData.email,
           password: formData.password,
         });
       } else {
-        console.log("🔄 Calling signUp.email...");
         result = await signUp.email({
           email: formData.email,
           password: formData.password,
@@ -101,23 +97,14 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
         });
       }
 
-      console.log("📥 Auth response received:", result);
-      console.log("📋 Response type:", typeof result);
-      console.log("📋 Response keys:", Object.keys(result || {}));
-
       if ("error" in result && result.error) {
-        console.log("❌ Auth error found:", result.error);
         setError(result.error.message || "Authentication failed");
         return;
       }
 
       if ("data" in result && result.data) {
-        console.log("✅ Auth data found:", result.data);
         const userData = result.data.user;
-        console.log("🔍 User data:", userData);
-
         if (userData) {
-          console.log("✅ Authentication successful");
           setSuccess(true);
           setTimeout(() => onSuccess?.(), 1500);
           return;
@@ -125,16 +112,13 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
       }
 
       if ("user" in result && result.user) {
-        console.log("✅ Found user directly in result");
         setSuccess(true);
         setTimeout(() => onSuccess?.(), 1500);
         return;
       }
 
-      console.log("⚠️ Unexpected response structure:", result);
       setError("Authentication response unclear. Please try again.");
     } catch (err: unknown) {
-      console.log("❌ Exception thrown during auth:", err);
       let errorMessage = `${isLogin ? "Login" : "Registration"} failed`;
 
       if (
@@ -143,9 +127,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
         "message" in err &&
         typeof (err as { message?: string }).message === "string"
       ) {
-        console.log("  - Error type:", typeof err);
-        console.log("  - Error message:", (err as { message: string }).message);
-        console.log("  - Full error:", err);
 
         if (
           (err as { message: string }).message.includes("Invalid") ||

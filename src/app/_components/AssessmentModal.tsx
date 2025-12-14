@@ -1,6 +1,6 @@
 // components/AssessmentModal.tsx
 import React from "react";
-import { X, Calendar, BarChart3, Heart, Activity } from "lucide-react";
+import { X, Calendar, TrendingUp, Activity, Gauge } from "lucide-react";
 import { Assessment } from "../types/wellness";
 
 interface AssessmentModalProps {
@@ -20,9 +20,9 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-slate-100 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
+        <div className="sticky top-0 bg-slate-100 border-b px-6 py-4 flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
             <p className="text-gray-600 flex items-center gap-2 mt-1">
@@ -64,9 +64,11 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({
 
           {/* Scores Breakdown */}
           <div className="grid md:grid-cols-2 gap-6 mb-8">
-            <div className="bg-white border rounded-xl p-6">
+            <div className="bg-slate-100 border rounded-xl p-6">
               <div className="flex items-center gap-3 mb-4">
-                <Heart className="w-6 h-6 text-red-500" />
+                <div className="w-8 h-8 bg-gradient-to-br from-red-400 to-red-500 rounded-lg flex items-center justify-center">
+                  <Activity className="w-5 h-5 text-white" strokeWidth={2} />
+                </div>
                 <h3 className="text-lg font-semibold">Health Metrics</h3>
               </div>
               <div className="space-y-3">
@@ -94,9 +96,11 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({
             </div>
 
             {/* Form Data Summary */}
-            <div className="bg-white border rounded-xl p-6">
+            <div className="bg-slate-100 border rounded-xl p-6">
               <div className="flex items-center gap-3 mb-4">
-                <Activity className="w-6 h-6 text-green-500" />
+                <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-green-500 rounded-lg flex items-center justify-center">
+                  <Gauge className="w-5 h-5 text-white" strokeWidth={2} />
+                </div>
                 <h3 className="text-lg font-semibold">Assessment Details</h3>
               </div>
               <div className="space-y-3 text-sm">
@@ -145,7 +149,7 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({
           {/* Detailed Metrics */}
           <div className="bg-gray-50 rounded-xl p-6">
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-blue-500" />
+              <TrendingUp className="w-5 h-5 text-blue-500" strokeWidth={2} />
               Detailed Health Markers
             </h3>
             <div className="grid md:grid-cols-3 gap-4 text-sm">

@@ -18,13 +18,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { title, formData, scores, grade } = await req.json();
+    const body = await req.json();
+    const { title, formData, scores, grade } = body;
 
+    // PostgreSQL's pg library automatically converts objects to JSONB,
+    // but we'll ensure proper JSON structure
     const result = await pool.query(
       `INSERT INTO wellness_assessments (user_id, title, form_data, scores, grade)
        VALUES ($1, $2, $3, $4, $5)
        RETURNING id, created_at`,
-      [session.user.id, title, formData, scores, grade]
+      [
+        session.user.id,
+        title,
+        formData, // pg library handles JSONB conversion automatically
+        scores,
+        grade,
+      ]
     );
 
     return NextResponse.json({
@@ -33,8 +42,13 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error("Save assessment error:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to save assessment";
     return NextResponse.json(
-      { error: "Failed to save assessment" },
+      {
+        error: errorMessage,
+        success: false,
+      },
       { status: 500 }
     );
   }

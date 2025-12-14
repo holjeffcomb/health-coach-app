@@ -99,7 +99,7 @@ export const MetabolicHealthForm: React.FC<MetabolicHealthFormProps> = ({
         Metabolic Health
       </h2>
       <div className="grid grid-cols-2 gap-4">
-        {inputFields.map(({ key, label, placeholder, step, tooltip }) => (
+        {inputFields.map(({ key, label, step, tooltip }) => (
           <div key={key}>
             <Tooltip content={tooltip}>
               <label className="block text-sm font-medium text-gray-600">

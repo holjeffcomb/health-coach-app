@@ -1,7 +1,7 @@
 // components/ResultsDisplay.tsx
 import React, { useState } from "react";
 import type { FormData, Scores, Grade } from "../types/wellness";
-import { Save, CheckCircle } from "lucide-react";
+import { Save, BadgeCheck } from "lucide-react";
 
 interface ResultsDisplayProps {
   formData: FormData;
@@ -38,7 +38,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6">
+    <div className="bg-slate-100 rounded-xl shadow-lg p-6">
       <h2 className="text-2xl font-bold text-gray-800 mb-6">
         Your Health & Longevity Score
       </h2>
@@ -152,7 +152,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                 </>
               ) : (
                 <>
-                  <Save className="w-4 h-4" />
+                  <Save className="w-4 h-4" strokeWidth={2} />
                   Save Assessment
                 </>
               )}
@@ -162,7 +162,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
           {/* Success/Error Messages */}
           {showSaveSuccess && (
             <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-green-600" />
+              <BadgeCheck className="w-4 h-4 text-green-600" strokeWidth={2.5} />
               <span className="text-green-800 text-sm">
                 Assessment saved successfully!
               </span>
