@@ -39,8 +39,9 @@ function generateHTML(assessment: Assessment): string {
   });
   
   // Calculate total score if not present
-  const totalScore = (scores as any).total || 
-    Object.values(scores).reduce((a: number, b: number) => a + b, 0);
+  const scoresRecord = scores as Record<string, number>;
+  const totalScore = scoresRecord.total || 
+    Object.values(scoresRecord).reduce((a: number, b: number) => a + b, 0);
 
   return `
 <!DOCTYPE html>

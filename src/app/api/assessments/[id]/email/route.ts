@@ -64,8 +64,9 @@ export async function POST(
     );
 
     // Calculate total score if not present
-    const totalScore = (assessment.scores as any).total || 
-      Object.values(assessment.scores).reduce((a: number, b: number) => a + b, 0);
+    const scores = assessment.scores as Record<string, number>;
+    const totalScore = scores.total || 
+      Object.values(scores).reduce((a: number, b: number) => a + b, 0);
 
     // Send email
     const emailResult = await resend.emails.send({

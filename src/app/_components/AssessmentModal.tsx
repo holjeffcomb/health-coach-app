@@ -68,7 +68,7 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({
           message: data.error || "Failed to send email",
         });
       }
-    } catch (error) {
+    } catch {
       setEmailStatus({
         type: "error",
         message: "An error occurred while sending the email",
