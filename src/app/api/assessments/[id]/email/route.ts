@@ -12,7 +12,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Verify authentication
@@ -24,6 +24,7 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const { id } = await params;
     const { email } = await req.json();
     
     if (!email) {
@@ -38,7 +39,7 @@ export async function POST(
       `SELECT id, title, form_data, scores, grade, created_at, updated_at
        FROM wellness_assessments 
        WHERE id = $1 AND user_id = $2`,
-      [params.id, session.user.id]
+      [id, session.user.id]
     );
 
     if (result.rows.length === 0) {
