@@ -31,6 +31,15 @@ BETTER_AUTH_SECRET=your-random-secret-here
 # Optional: Better Auth Base URL (defaults to http://localhost:3000)
 # Only needed if your auth server is on a different domain
 BETTER_AUTH_URL=http://localhost:3000
+
+# Resend API Key (for email functionality)
+# Get this from: https://resend.com/api-keys
+# Sign up for free at https://resend.com
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxx
+
+# Resend From Email (sender email address)
+# Must be a verified domain in Resend, or use onboarding@resend.dev for testing
+RESEND_FROM_EMAIL=Health Coach <onboarding@resend.dev>
 ```
 
 #### For Production (Vercel/other hosting):
@@ -46,6 +55,8 @@ Create a `.env.local` file in your project root (it's already in `.gitignore`):
 DATABASE_URL=postgresql://postgres:[YOUR-PASSWORD]@db.[YOUR-PROJECT-REF].supabase.co:5432/postgres
 BETTER_AUTH_SECRET=your-random-secret-here
 BETTER_AUTH_URL=http://localhost:3000
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxx
+RESEND_FROM_EMAIL=Health Coach <onboarding@resend.dev>
 ```
 
 ### 3. Set Up Supabase Database Schema
@@ -76,7 +87,8 @@ Or use an online generator, but make sure it's at least 32 characters long.
 - [ ] Create new Supabase project at https://supabase.com
 - [ ] Get your database connection string from Project Settings → Database
 - [ ] Generate a new `BETTER_AUTH_SECRET` using `openssl rand -base64 32`
-- [ ] Create `.env.local` file with the three environment variables
+- [ ] Create `.env.local` file with the environment variables (including Resend for email)
+- [ ] Set up Resend account and add API key (optional, for email functionality)
 - [ ] Run the `supabase_schema.sql` script in Supabase SQL Editor
 - [ ] Verify tables are created (check Table Editor)
 - [ ] Test locally: `npm run dev`
@@ -154,4 +166,11 @@ After configuration, test that everything works:
 ### "Unauthorized" errors
 - Check that Better Auth tables are created correctly
 - Verify session table has proper foreign key to user table
+
+### Email sending fails
+- Verify `RESEND_API_KEY` is set correctly in `.env.local`
+- Check that `RESEND_FROM_EMAIL` is a valid email format
+- For testing, use `onboarding@resend.dev` as the from email
+- Make sure you've signed up for a Resend account at https://resend.com
+- Check Resend dashboard for API key status and usage limits
 

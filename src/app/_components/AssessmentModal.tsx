@@ -1,6 +1,15 @@
 // components/AssessmentModal.tsx
-import React from "react";
-import { X, Calendar, TrendingUp, Activity, Gauge } from "lucide-react";
+import React, { useState } from "react";
+import {
+  X,
+  Calendar,
+  TrendingUp,
+  Activity,
+  Gauge,
+  Mail,
+  CheckCircle2,
+  AlertCircle,
+} from "lucide-react";
 import { Assessment } from "../types/wellness";
 
 interface AssessmentModalProps {
@@ -14,9 +23,60 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  const [email, setEmail] = useState("jeffholcomb@proton.me");
+  const [isSending, setIsSending] = useState(false);
+  const [emailStatus, setEmailStatus] = useState<{
+    type: "success" | "error" | null;
+    message: string;
+  }>({ type: null, message: "" });
+
   if (!isOpen || !assessment) return null;
 
   const { form_data, scores, grade, title, created_at } = assessment;
+
+  const handleSendEmail = async () => {
+    if (!email || !email.includes("@")) {
+      setEmailStatus({
+        type: "error",
+        message: "Please enter a valid email address",
+      });
+      return;
+    }
+
+    setIsSending(true);
+    setEmailStatus({ type: null, message: "" });
+
+    try {
+      const response = await fetch(`/api/assessments/${assessment.id}/email`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setEmailStatus({
+          type: "success",
+          message: "Email sent successfully!",
+        });
+      } else {
+        setEmailStatus({
+          type: "error",
+          message: data.error || "Failed to send email",
+        });
+      }
+    } catch (error) {
+      setEmailStatus({
+        type: "error",
+        message: "An error occurred while sending the email",
+      });
+    } finally {
+      setIsSending(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -222,6 +282,62 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({
                 </div>
               )}
             </div>
+          </div>
+        </div>
+
+        {/* Email Section */}
+        <div className="px-6 py-4 border-t border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+            <Mail className="w-5 h-5" />
+            Email Results
+          </h3>
+          <div className="space-y-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email Address
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter email address"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                disabled={isSending}
+              />
+            </div>
+            <button
+              onClick={handleSendEmail}
+              disabled={isSending || !email}
+              className="w-full px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              {isSending ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  Sending...
+                </>
+              ) : (
+                <>
+                  <Mail className="w-4 h-4" />
+                  Send Results via Email
+                </>
+              )}
+            </button>
+            {emailStatus.type && (
+              <div
+                className={`p-3 rounded-lg flex items-center gap-2 ${
+                  emailStatus.type === "success"
+                    ? "bg-green-50 text-green-800 border border-green-200"
+                    : "bg-red-50 text-red-800 border border-red-200"
+                }`}
+              >
+                {emailStatus.type === "success" ? (
+                  <CheckCircle2 className="w-5 h-5" />
+                ) : (
+                  <AlertCircle className="w-5 h-5" />
+                )}
+                <span className="text-sm">{emailStatus.message}</span>
+              </div>
+            )}
           </div>
         </div>
 
