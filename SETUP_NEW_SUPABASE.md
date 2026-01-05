@@ -21,8 +21,9 @@ You need to set up these environment variables for your new Supabase project:
 ```bash
 # Supabase Database Connection String
 # Get this from: Supabase Dashboard → Project Settings → Database → Connection String
-# Use the "Connection pooling" URI (recommended) or "Direct connection" URI
-DATABASE_URL=postgresql://postgres:[YOUR-PASSWORD]@db.[YOUR-PROJECT-REF].supabase.co:5432/postgres
+# ⚠️ IMPORTANT: Use "Session Pooler" (port 6543), NOT "Direct connection" (port 5432)
+# Direct connection is NOT IPv4 compatible and will fail on Vercel
+DATABASE_URL=postgresql://postgres:[YOUR-PASSWORD]@db.[YOUR-PROJECT-REF].supabase.co:6543/postgres
 
 # Better Auth Secret (for encryption and signing)
 # Generate a random secret: openssl rand -base64 32
@@ -52,7 +53,8 @@ Create a `.env.local` file in your project root (it's already in `.gitignore`):
 
 ```bash
 # .env.local
-DATABASE_URL=postgresql://postgres:[YOUR-PASSWORD]@db.[YOUR-PROJECT-REF].supabase.co:5432/postgres
+# ⚠️ Use Session Pooler (port 6543), NOT Direct connection (port 5432)
+DATABASE_URL=postgresql://postgres:[YOUR-PASSWORD]@db.[YOUR-PROJECT-REF].supabase.co:6543/postgres
 BETTER_AUTH_SECRET=your-random-secret-here
 BETTER_AUTH_URL=http://localhost:3000
 RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxx
@@ -100,26 +102,31 @@ Or use an online generator, but make sure it's at least 32 characters long.
 2. Click **Project Settings** (gear icon)
 3. Go to **Database** section
 4. Scroll to **Connection string**
-5. Choose **Connection pooling** (recommended for serverless) or **Direct connection**
-6. Copy the URI - it looks like:
+5. ⚠️ **IMPORTANT**: Choose **Session Pooler** (NOT Direct connection)
+   - Direct connection is NOT IPv4 compatible and will cause DNS errors
+   - Session Pooler uses port 6543 and works everywhere
+6. Copy the URI - it should look like:
    ```
-   postgresql://postgres:[YOUR-PASSWORD]@db.xxxxx.supabase.co:5432/postgres
+   postgresql://postgres:[YOUR-PASSWORD]@db.xxxxx.supabase.co:6543/postgres
    ```
+   Note: Port should be 6543, not 5432
 7. Replace `[YOUR-PASSWORD]` with your actual database password
 
 ## 🚨 Important Notes
 
 ### Connection Pooling vs Direct Connection
 
-- **Connection Pooling** (recommended): Better for serverless environments like Vercel
+- **Connection Pooling (Session Pooler)** ⭐ **REQUIRED**: IPv4 compatible, works with Vercel and most networks
   - URI format: `postgresql://postgres:[PASSWORD]@db.[PROJECT].supabase.co:6543/postgres`
   - Port: `6543`
-  - Use this for production/serverless
+  - **Use this for both production/serverless AND local development**
+  - **Direct connection is NOT IPv4 compatible** and will cause DNS errors on Vercel and many networks
 
-- **Direct Connection**: For local development or long-lived connections
+- **Direct Connection**: ⚠️ **NOT RECOMMENDED** - Not IPv4 compatible
   - URI format: `postgresql://postgres:[PASSWORD]@db.[PROJECT].supabase.co:5432/postgres`
   - Port: `5432`
-  - Use this for local development
+  - Will cause `ENOTFOUND` DNS errors on IPv4-only networks (like Vercel)
+  - Only works if your network supports IPv6
 
 ### Database Password
 
@@ -150,10 +157,13 @@ After configuration, test that everything works:
 
 ## 🆘 Troubleshooting
 
-### "Database connection failed"
-- Check that `DATABASE_URL` is correct
-- Verify password is correct (no special characters need URL encoding)
-- Make sure you're using the right connection type (pooling vs direct)
+### "Database connection failed" or "ENOTFOUND" DNS errors
+- ⚠️ **Most common issue**: Using Direct connection (port 5432) instead of Session Pooler (port 6543)
+  - Direct connection is NOT IPv4 compatible and will fail on Vercel and many networks
+  - Always use Session Pooler (port 6543) for both local and production
+- Check that `DATABASE_URL` is correct and uses port 6543
+- Verify password is correct (special characters may need URL encoding)
+- Make sure you're using Session Pooler, NOT Direct connection
 
 ### "BETTER_AUTH_SECRET is required"
 - Make sure `.env.local` exists and has `BETTER_AUTH_SECRET` set
