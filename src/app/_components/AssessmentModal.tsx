@@ -1,5 +1,6 @@
 // components/AssessmentModal.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import {
   X,
   Calendar,
@@ -23,14 +24,37 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  const [email, setEmail] = useState("jeffholcomb@proton.me");
+  const [mounted, setMounted] = useState(false);
+  const [email, setEmail] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [emailStatus, setEmailStatus] = useState<{
     type: "success" | "error" | null;
     message: string;
   }>({ type: null, message: "" });
 
-  if (!isOpen || !assessment) return null;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Reset email/status when opening a different assessment (by id), not on every data refetch reference
+  useEffect(() => {
+    if (!isOpen || !assessment) return;
+    setEmail("");
+    setEmailStatus({ type: null, message: "" });
+    setIsSending(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- assessment?.id only; full object clears email on refetch
+  }, [isOpen, assessment?.id]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [isOpen, onClose]);
+
+  if (!isOpen || !assessment || !mounted) return null;
 
   const { form_data, scores, grade, title, created_at } = assessment;
 
@@ -78,15 +102,32 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({
     }
   };
 
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-slate-100 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="sticky top-0 bg-slate-100 border-b px-6 py-4 flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
-            <p className="text-gray-600 flex items-center gap-2 mt-1">
-              <Calendar className="w-4 h-4" />
+  // Portal to document.body so position:fixed is not clipped or re-rooted by ancestor
+  // .card (overflow:hidden + hover transform) on the dashboard.
+  const modal = (
+    <div
+      className="fixed inset-0 z-[200] flex justify-center items-start sm:items-center overflow-y-auto overscroll-y-contain bg-black/50 p-3 sm:p-4"
+      onClick={onClose}
+      role="presentation"
+    >
+      <div
+        className="my-4 sm:my-6 w-full max-w-4xl max-h-[min(92dvh,calc(100vh-2rem))] flex flex-col rounded-xl bg-slate-100 shadow-xl ring-1 ring-black/10 touch-pan-y"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="assessment-modal-title"
+      >
+        {/* Header — fixed height strip, no sticky fight with nested scroll */}
+        <div className="shrink-0 border-b border-gray-200/80 bg-slate-100 px-4 sm:px-6 py-3 sm:py-4 flex items-start justify-between gap-3 rounded-t-xl">
+          <div className="min-w-0 pr-2">
+            <h2
+              id="assessment-modal-title"
+              className="text-lg sm:text-2xl font-bold text-gray-900 break-words"
+            >
+              {title}
+            </h2>
+            <p className="text-gray-600 flex items-center gap-2 mt-1 text-sm">
+              <Calendar className="w-4 h-4 shrink-0" />
               {new Date(created_at).toLocaleDateString("en-US", {
                 year: "numeric",
                 month: "long",
@@ -97,21 +138,22 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({
             </p>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            className="shrink-0 p-2 hover:bg-gray-200/80 rounded-full transition-colors"
+            aria-label="Close"
           >
             <X className="w-6 h-6" />
           </button>
         </div>
 
-        {/* Content */}
-        <div className="p-6">
+        {/* Single scroll region for all body content */}
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-4 sm:px-6 py-4 sm:py-6">
           {/* Overall Grade */}
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 mb-8">
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 sm:p-6 mb-6 sm:mb-8">
             <div className="text-center">
               <div
-                className="text-6xl font-bold mb-2"
-                style={{ color: grade.color }}
+                className={`text-5xl sm:text-6xl font-bold mb-2 tabular-nums ${grade.color || "text-gray-800"}`}
               >
                 {grade.grade}
               </div>
@@ -123,22 +165,25 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({
           </div>
 
           {/* Scores Breakdown */}
-          <div className="grid md:grid-cols-2 gap-6 mb-8">
-            <div className="bg-slate-100 border rounded-xl p-6">
+          <div className="grid md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+            <div className="bg-white/80 border border-gray-200 rounded-xl p-4 sm:p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-br from-red-400 to-red-500 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-gradient-to-br from-red-400 to-red-500 rounded-lg flex items-center justify-center shrink-0">
                   <Activity className="w-5 h-5 text-white" strokeWidth={2} />
                 </div>
                 <h3 className="text-lg font-semibold">Health Metrics</h3>
               </div>
               <div className="space-y-3">
                 {Object.entries(scores).map(([key, value]) => (
-                  <div key={key} className="flex justify-between items-center">
-                    <span className="capitalize text-gray-700">
+                  <div
+                    key={key}
+                    className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2"
+                  >
+                    <span className="capitalize text-gray-700 text-sm break-words">
                       {key.replace(/([A-Z])/g, " $1").toLowerCase()}
                     </span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-20 bg-gray-200 rounded-full h-2">
+                    <div className="flex items-center gap-2 shrink-0">
+                      <div className="w-16 sm:w-20 bg-gray-200 rounded-full h-2 min-w-0">
                         <div
                           className="bg-blue-500 h-2 rounded-full"
                           style={{
@@ -156,15 +201,15 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({
             </div>
 
             {/* Form Data Summary */}
-            <div className="bg-slate-100 border rounded-xl p-6">
+            <div className="bg-white/80 border border-gray-200 rounded-xl p-4 sm:p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-green-500 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-green-500 rounded-lg flex items-center justify-center shrink-0">
                   <Gauge className="w-5 h-5 text-white" strokeWidth={2} />
                 </div>
                 <h3 className="text-lg font-semibold">Assessment Details</h3>
               </div>
               <div className="space-y-3 text-sm">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
                     <span className="text-gray-600">Age:</span>
                     <span className="font-semibold ml-2">
@@ -207,12 +252,12 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({
           </div>
 
           {/* Detailed Metrics */}
-          <div className="bg-gray-50 rounded-xl p-6">
+          <div className="bg-gray-50 rounded-xl p-4 sm:p-6 mb-2">
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-blue-500" strokeWidth={2} />
+              <TrendingUp className="w-5 h-5 text-blue-500 shrink-0" strokeWidth={2} />
               Detailed Health Markers
             </h3>
-            <div className="grid md:grid-cols-3 gap-4 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 text-sm">
               {form_data.systolic && (
                 <div>
                   <span className="text-gray-600">Blood Pressure:</span>
@@ -283,33 +328,33 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({
               )}
             </div>
           </div>
-        </div>
 
-        {/* Email Section */}
-        <div className="px-6 py-4 border-t border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-            <Mail className="w-5 h-5" />
-            Email Results
-          </h3>
-          <div className="space-y-3">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter email address"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                disabled={isSending}
-              />
-            </div>
-            <button
-              onClick={handleSendEmail}
-              disabled={isSending || !email}
-              className="w-full px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
+          {/* Email Section — inside same scroll area to avoid nested scroll jank */}
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <Mail className="w-5 h-5 shrink-0" />
+              Email Results
+            </h3>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter email address"
+                  className="w-full max-w-full box-border px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  disabled={isSending}
+                />
+              </div>
+              <button
+                type="button"
+                onClick={handleSendEmail}
+                disabled={isSending || !email}
+                className="w-full px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
               {isSending ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
@@ -338,21 +383,24 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({
                 <span className="text-sm">{emailStatus.message}</span>
               </div>
             )}
+            </div>
           </div>
-        </div>
 
-        {/* Footer */}
-        <div className="sticky bottom-0 bg-gray-50 px-6 py-4 flex justify-end">
-          <button
-            onClick={onClose}
-            className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
-          >
-            Close
-          </button>
+          <div className="mt-8 flex justify-end">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
+            >
+              Close
+            </button>
+          </div>
         </div>
       </div>
     </div>
   );
+
+  return createPortal(modal, document.body);
 };
 
 export default AssessmentModal;

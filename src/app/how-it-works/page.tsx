@@ -17,37 +17,35 @@ import {
 
 export default function HowItWorksPage() {
   return (
-    <div className="min-h-screen bg-slate-200">
-      {/* Navigation */}
-      <nav className="bg-slate-100 sticky top-0 z-50 backdrop-blur-sm bg-slate-100/95">
+    <div className="min-h-screen bg-brand-cream text-brand-body">
+      <nav className="sticky top-0 z-50 border-b border-brand-charcoal/5 bg-brand-parchment/90 backdrop-blur-md shadow-[0_1px_0_rgba(218,176,83,0.15)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center">
-              <div className="w-8 h-8 bg-gradient-to-br from-slate-600 to-slate-700 rounded-lg flex items-center justify-center mr-3 shadow-md">
-                <Sparkles className="w-5 h-5 text-white" strokeWidth={2.5} />
+            <Link href="/" className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-xl bg-brand-charcoal flex items-center justify-center shadow-md ring-1 ring-brand-gold/35 shrink-0">
+                <Sparkles className="w-5 h-5 text-brand-gold" strokeWidth={2.5} />
               </div>
-              <span className="text-xl font-semibold text-gray-900">
+              <span className="text-lg font-display font-semibold text-brand-ink truncate tracking-tight">
                 HALO Wellness
               </span>
             </Link>
             <Link
               href="/"
-              className="flex items-center text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors"
+              className="flex items-center text-sm font-medium text-brand-warm hover:text-brand-ink transition-colors"
             >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Home
+              <ArrowLeft className="w-4 h-4 mr-2 shrink-0" />
+              Back to home
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="py-16 bg-slate-300">
+      <section className="py-16 bg-gradient-to-b from-brand-sand/50 to-brand-cream border-b border-brand-charcoal/5">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">
-            How the HALO Assessment Works
+          <h1 className="font-display text-4xl sm:text-5xl font-semibold text-brand-ink mb-6 tracking-tight">
+            How the HALO assessment works
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg sm:text-xl text-brand-body/90 max-w-2xl mx-auto leading-relaxed">
             A comprehensive, evidence-based evaluation of your health and longevity potential
           </p>
         </div>

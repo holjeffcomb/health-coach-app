@@ -1,18 +1,27 @@
 // app/api/assessments/route.ts
 import { NextRequest, NextResponse } from "next/server";
+import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { Pool } from "pg";
+
+/** pg requires Node; avoid any Edge mis-detection. */
+export const runtime = "nodejs";
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
+async function getSessionFromRequest() {
+  const headersList = await headers();
+  return auth.api.getSession({
+    headers: headersList,
+    query: { disableCookieCache: true },
+  });
+}
+
 export async function POST(req: NextRequest) {
   try {
-    // Verify authentication
-    const session = await auth.api.getSession({
-      headers: req.headers,
-    });
+    const session = await getSessionFromRequest();
 
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -21,18 +30,16 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { title, formData, scores, grade } = body;
 
-    // PostgreSQL's pg library automatically converts objects to JSONB,
-    // but we'll ensure proper JSON structure
     const result = await pool.query(
       `INSERT INTO wellness_assessments (user_id, title, form_data, scores, grade)
-       VALUES ($1, $2, $3, $4, $5)
+       VALUES ($1, $2, $3::jsonb, $4::jsonb, $5::jsonb)
        RETURNING id, created_at`,
       [
         session.user.id,
         title,
-        formData, // pg library handles JSONB conversion automatically
-        scores,
-        grade,
+        JSON.stringify(formData ?? {}),
+        JSON.stringify(scores ?? {}),
+        JSON.stringify(grade ?? {}),
       ]
     );
 
@@ -54,11 +61,9 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
-    const session = await auth.api.getSession({
-      headers: req.headers,
-    });
+    const session = await getSessionFromRequest();
 
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

@@ -2,6 +2,38 @@
 import { betterAuth } from "better-auth";
 import { Pool } from "pg";
 
+/** Used for cookie issuance and OAuth callbacks; must match the browser origin in each environment. */
+function getAuthBaseURL(): string {
+  if (process.env.BETTER_AUTH_URL) {
+    return process.env.BETTER_AUTH_URL;
+  }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  return "http://localhost:3000";
+}
+
+function getTrustedOrigins(): string[] {
+  /* localhost and 127.0.0.1 are different origins — include both for local dev. */
+  const defaults = [
+    "http://localhost:3000",
+    "https://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://127.0.0.1:3000",
+    "http://[::1]:3000",
+    "https://[::1]:3000",
+    "https://health-coach-calculator.vercel.app",
+  ];
+  const fromEnv =
+    process.env.BETTER_AUTH_TRUSTED_ORIGINS?.split(",")
+      .map((s) => s.trim())
+      .filter(Boolean) ?? [];
+  const vercel = process.env.VERCEL_URL
+    ? [`https://${process.env.VERCEL_URL}`]
+    : [];
+  return [...new Set([...defaults, ...fromEnv, ...vercel])];
+}
+
 export const auth = betterAuth({
   // Database connection to Supabase
   database: new Pool({
@@ -11,16 +43,9 @@ export const auth = betterAuth({
   // Secret for encryption and signing
   secret: process.env.BETTER_AUTH_SECRET!,
 
-  // Base URL for your app
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  baseURL: getAuthBaseURL(),
 
-  // 🔧 ADD THIS: Fix the CORS issue
-  trustedOrigins: [
-    "http://localhost:3000", // ← ADD THIS LINE (what you're using)
-    "https://localhost:3000", // ← ADD THIS LINE (for future HTTPS)
-    // Add your production domain later:
-    "https://health-coach-calculator.vercel.app",
-  ],
+  trustedOrigins: getTrustedOrigins(),
 
   // Enable email and password authentication
   emailAndPassword: {
@@ -43,16 +68,14 @@ export const auth = betterAuth({
   //   },
   // },
 
-  // Optional: Email verification (if enabled)
+  // When you turn on requireEmailVerification, set sendOnSignUp: true and implement sendVerificationEmail.
   emailVerification: {
     sendVerificationEmail: async ({ user, url }) => {
       console.log(`Send verification email to ${user.email}: ${url}`);
-      // Implement your email sending logic here
-      // You can use services like Resend, SendGrid, etc.
     },
-    sendOnSignUp: true,
+    sendOnSignUp: false,
     autoSignInAfterVerification: true,
-    expiresIn: 3600, // 1 hour
+    expiresIn: 3600,
   },
 
   // User configuration

@@ -10,24 +10,19 @@ import {
   Activity,
   Dumbbell,
   Scale,
-  BadgeCheck,
-  XCircle,
   Heart,
   Ruler,
 } from "lucide-react";
-import type { User } from "../types/wellness";
+import type { User, FormData, Scores, Grade, ExtendedFormData } from "../types/wellness";
 import { calculateScores, getGradeFromScore } from "../utils/scoringUtils";
-import type { FormData, Scores, Grade } from "../types/wellness";
-
-// Extended FormData for the component (includes visceralFat for UI)
-interface ExtendedFormData extends FormData {
-  visceralFat: string;
-  height: string;
-  weight: string;
-}
+import {
+  AssessmentCalculatingView,
+  AssessmentResultsSummary,
+} from "./AssessmentPostSubmit";
 
 type WellnessCalculatorProps = {
-  user: User; // required; App renders this only when a user exists
+  user: User;
+  onBackToDashboard?: () => void;
 };
 
 // Tooltip Component
@@ -408,8 +403,19 @@ const BodyCompositionForm: React.FC<{
 };
 
 // Main Multi-Step Component
-const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
+type FlowPhase = "steps" | "calculating" | "results";
+
+const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({
+  user,
+  onBackToDashboard,
+}) => {
   const [showUserBanner] = useState(true);
+
+  const [flowPhase, setFlowPhase] = useState<FlowPhase>("steps");
+  const [saveFeedback, setSaveFeedback] = useState<{
+    ok: boolean;
+    text: string;
+  } | null>(null);
 
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<ExtendedFormData>({
@@ -438,12 +444,7 @@ const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
   const scores: Scores = calculateScores(formData);
   const grade: Grade = getGradeFromScore(scores.total);
 
-  // Save state
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveStatus, setSaveStatus] = useState<{
-    success: boolean;
-    message: string;
-  } | null>(null);
+  const [isSavingAssessment, setIsSavingAssessment] = useState(false);
 
   const steps = [
     {
@@ -532,37 +533,40 @@ const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
 
   const canProceedToNext = () => isStepComplete(currentStep);
 
-  const handleSubmit = async () => {
-    if (!areAllStepsComplete()) {
-      return;
-    }
+  const buildFormPayload = (): FormData => ({
+    age: formData.age,
+    sex: formData.sex,
+    a1c: formData.a1c,
+    ldl: formData.ldl,
+    lpa: formData.lpa,
+    apoB: formData.apoB,
+    systolic: formData.systolic,
+    diastolic: formData.diastolic,
+    waistHeightRatio: formData.waistHeightRatio,
+    vo2Max: formData.vo2Max,
+    gripStrength: formData.gripStrength,
+    bodyFat: formData.bodyFat,
+    smm: formData.smm || "",
+    triglycerides: formData.triglycerides,
+    totalCholesterol: formData.totalCholesterol,
+    hdl: formData.hdl,
+  });
 
-    setIsSaving(true);
-    setSaveStatus(null);
+  const beginResultsFlow = () => {
+    if (!areAllStepsComplete()) return;
+    setSaveFeedback(null);
+    setFlowPhase("calculating");
+    window.setTimeout(() => setFlowPhase("results"), 3600);
+  };
 
+  const saveAssessmentToServer = async () => {
+    setIsSavingAssessment(true);
+    setSaveFeedback(null);
+    const formDataToSave = buildFormPayload();
     try {
-      // Convert ExtendedFormData to FormData (remove visceralFat, ensure smm is included)
-      const formDataToSave: FormData = {
-        age: formData.age,
-        sex: formData.sex,
-        a1c: formData.a1c,
-        ldl: formData.ldl,
-        lpa: formData.lpa,
-        apoB: formData.apoB,
-        systolic: formData.systolic,
-        diastolic: formData.diastolic,
-        waistHeightRatio: formData.waistHeightRatio,
-        vo2Max: formData.vo2Max,
-        gripStrength: formData.gripStrength,
-        bodyFat: formData.bodyFat,
-        smm: formData.smm || "",
-        triglycerides: formData.triglycerides,
-        totalCholesterol: formData.totalCholesterol,
-        hdl: formData.hdl,
-      };
-
       const response = await fetch("/api/assessments", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -574,19 +578,25 @@ const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
         }),
       });
 
-      const result = await response.json();
+      const raw = await response.text();
+      let result: { success?: boolean; error?: string };
+      try {
+        result = raw ? (JSON.parse(raw) as typeof result) : {};
+      } catch {
+        throw new Error(
+          `Save failed (${response.status}): ${raw.slice(0, 200).replace(/\s+/g, " ").trim() || "non-JSON response"}`,
+        );
+      }
 
       if (!response.ok) {
-        throw new Error(result.error || "Failed to save assessment");
+        throw new Error(result.error || `Failed to save (${response.status})`);
       }
 
       if (result.success) {
-        setSaveStatus({
-          success: true,
-          message: "Assessment saved successfully!",
+        setSaveFeedback({
+          ok: true,
+          text: "Saved to your dashboard. You can review it anytime from the dashboard.",
         });
-        // Clear status after 3 seconds
-        setTimeout(() => setSaveStatus(null), 3000);
       } else {
         throw new Error(result.error || "Failed to save assessment");
       }
@@ -594,14 +604,12 @@ const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
       console.error("Save failed:", error);
       const errorMessage =
         error instanceof Error ? error.message : "Failed to save assessment";
-      setSaveStatus({
-        success: false,
-        message: errorMessage,
+      setSaveFeedback({
+        ok: false,
+        text: errorMessage,
       });
-      // Clear error after 5 seconds
-      setTimeout(() => setSaveStatus(null), 5000);
     } finally {
-      setIsSaving(false);
+      setIsSavingAssessment(false);
     }
   };
 
@@ -633,10 +641,48 @@ const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
       weight: "",
     });
     setCurrentStep(0);
-    setSaveStatus(null);
+    setFlowPhase("steps");
+    setSaveFeedback(null);
   };
 
   const CurrentStepComponent = steps[currentStep].component;
+
+  if (flowPhase === "calculating") {
+    return (
+      <div className="min-h-screen bg-brand-cream">
+        {onBackToDashboard && (
+          <div className="border-b border-brand-charcoal/5 bg-brand-parchment/80 px-4 py-3 backdrop-blur-sm">
+            <button
+              type="button"
+              onClick={onBackToDashboard}
+              className="text-sm font-semibold text-halo-blue hover:text-primary-700"
+            >
+              ← Back to dashboard
+            </button>
+          </div>
+        )}
+        <AssessmentCalculatingView />
+      </div>
+    );
+  }
+
+  if (flowPhase === "results") {
+    return (
+      <div className="min-h-screen bg-brand-cream">
+        <AssessmentResultsSummary
+          user={user}
+          formSnapshot={formData}
+          scores={scores}
+          grade={grade}
+          onSave={saveAssessmentToServer}
+          isSaving={isSavingAssessment}
+          saveFeedback={saveFeedback}
+          onStartOver={clearForm}
+          onBackToDashboard={onBackToDashboard}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-300">
@@ -667,29 +713,6 @@ const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
               Clear Form
             </button>
 
-            {/* Save Status Messages */}
-            {saveStatus && (
-              <div
-                className={`mb-4 p-3 rounded-xl flex items-center gap-2 ${
-                  saveStatus.success
-                    ? "bg-green-50 border border-green-200"
-                    : "bg-red-50 border border-red-200"
-                }`}
-              >
-                {saveStatus.success ? (
-                  <BadgeCheck className="w-5 h-5 text-green-600" strokeWidth={2.5} />
-                ) : (
-                  <XCircle className="w-5 h-5 text-red-600" strokeWidth={2} />
-                )}
-                <span
-                  className={`text-sm font-medium ${
-                    saveStatus.success ? "text-green-800" : "text-red-800"
-                  }`}
-                >
-                  {saveStatus.message}
-                </span>
-              </div>
-            )}
           </div>
 
           <div className="p-8 flex-1 overflow-y-auto pb-32">
@@ -778,25 +801,16 @@ const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
           {/* Fixed Submit Button at Bottom of Sidebar */}
           <div className="absolute bottom-0 left-0 right-0 p-4 bg-slate-200 shadow-lg">
             <button
-              onClick={handleSubmit}
-              disabled={!areAllStepsComplete() || isSaving}
-              className={`flex items-center gap-3 px-4 py-4 w-full justify-center rounded-xl font-semibold transition-colors ${
-                areAllStepsComplete() && !isSaving
-                  ? "bg-[#059669] hover:bg-[#047857] text-white shadow-md border-2 border-[#047857]"
-                  : "bg-gray-400 text-gray-700 cursor-not-allowed border-2 border-gray-400"
+              onClick={beginResultsFlow}
+              disabled={!areAllStepsComplete()}
+              className={`flex items-center gap-3 px-4 py-4 w-full justify-center rounded-xl font-semibold transition-colors border-2 ${
+                areAllStepsComplete()
+                  ? "bg-[#059669] hover:bg-[#047857] text-white shadow-md border-[#047857]"
+                  : "bg-gray-400 text-gray-700 cursor-not-allowed border-gray-400"
               }`}
             >
-              {isSaving ? (
-                <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <Check className="w-5 h-5" />
-                  Submit Assessment
-                </>
-              )}
+              <Check className="w-5 h-5" />
+              Submit assessment
             </button>
           </div>
         </div>
@@ -866,25 +880,16 @@ const WellnessCalculator: React.FC<WellnessCalculatorProps> = ({ user }) => {
 
                 {currentStep === steps.length - 1 ? (
                   <button
-                    onClick={handleSubmit}
-                    disabled={!areAllStepsComplete() || isSaving}
-                    className={`flex items-center gap-3 px-6 py-4 rounded-xl font-semibold transition-colors ${
-                      areAllStepsComplete() && !isSaving
-                        ? "bg-[#059669] hover:bg-[#047857] text-white shadow-lg border-2 border-[#047857]"
-                        : "bg-gray-400 text-gray-700 cursor-not-allowed border-2 border-gray-400"
+                    onClick={beginResultsFlow}
+                    disabled={!areAllStepsComplete()}
+                    className={`flex items-center gap-3 px-6 py-4 rounded-xl font-semibold transition-colors border-2 ${
+                      areAllStepsComplete()
+                        ? "bg-[#059669] hover:bg-[#047857] text-white shadow-lg border-[#047857]"
+                        : "bg-gray-400 text-gray-700 cursor-not-allowed border-gray-400"
                     }`}
                   >
-                    {isSaving ? (
-                      <>
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                        Saving...
-                      </>
-                    ) : (
-                      <>
-                        <Check className="w-5 h-5" />
-                        Submit Assessment
-                      </>
-                    )}
+                    <Check className="w-5 h-5" />
+                    Submit assessment
                   </button>
                 ) : (
                   <button

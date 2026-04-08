@@ -1,7 +1,7 @@
-// app/_components/LandingPage.tsx - Clean HALO Design
+// app/_components/LandingPage.tsx — palette + type rhythm aligned with healthcoachinc.com (modernized)
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import {
   Sparkles,
@@ -9,10 +9,9 @@ import {
   Gauge,
   TrendingUp,
   ArrowRight,
-  UsersRound,
-  PlayCircle,
+  ClipboardList,
+  LineChart,
   BadgeCheck,
-  Stethoscope,
 } from "lucide-react";
 
 interface LandingPageProps {
@@ -24,405 +23,255 @@ const LandingPage: React.FC<LandingPageProps> = ({
   onStartAssessment,
   onAuthClick,
 }) => {
-  const [showDemo, setShowDemo] = useState(false);
-
   return (
-    <div className="min-h-screen bg-slate-200">
-      {/* Navigation */}
-      <nav className="bg-slate-100 sticky top-0 z-50 backdrop-blur-sm bg-slate-100/95">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <div className="w-8 h-8 bg-gradient-to-br from-slate-600 to-slate-700 rounded-lg flex items-center justify-center mr-3 shadow-md">
-                <Sparkles className="w-5 h-5 text-white" strokeWidth={2.5} />
+    <div className="min-h-screen bg-brand-cream flex flex-col text-brand-body">
+      <header className="sticky top-0 z-50 border-b border-brand-charcoal/5 bg-brand-parchment/90 backdrop-blur-md shadow-[0_1px_0_rgba(218,176,83,0.18)]">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-[3.75rem] flex items-center justify-between gap-3">
+          <div className="flex items-center min-w-0 gap-3">
+            <div className="w-9 h-9 rounded-xl bg-brand-charcoal flex items-center justify-center shadow-md ring-1 ring-brand-gold/35 shrink-0">
+              <Sparkles className="w-5 h-5 text-brand-gold" strokeWidth={2.5} />
+            </div>
+            <span className="text-base sm:text-lg font-semibold text-brand-ink tracking-tight truncate font-display">
+              HALO Wellness
+            </span>
+          </div>
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={onAuthClick}
+              className="text-sm font-medium text-brand-warm hover:text-brand-ink px-3 py-2 rounded-lg transition-colors"
+            >
+              Sign in
+            </button>
+            <button
+              type="button"
+              onClick={onStartAssessment}
+              className="btn-primary text-sm px-4 py-2.5 sm:px-5"
+            >
+              Start assessment
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main className="flex-1">
+        <section className="relative py-14 sm:py-20 overflow-hidden bg-gradient-to-b from-brand-cream via-white/50 to-brand-sand/40">
+          <div
+            className="pointer-events-none absolute inset-0 opacity-[0.07]"
+            style={{
+              backgroundImage: `radial-gradient(circle at 20% 20%, var(--color-brand-gold) 0%, transparent 45%),
+                radial-gradient(circle at 80% 0%, var(--color-brand-warm-muted) 0%, transparent 40%)`,
+            }}
+          />
+          <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-2xl">
+              <p className="text-[0.7rem] sm:text-xs font-semibold text-brand-warm uppercase tracking-[0.14em] mb-4">
+                What to do here
+              </p>
+              <h1 className="font-display text-4xl sm:text-[2.75rem] font-semibold text-brand-ink leading-[1.08] tracking-tight mb-5">
+                Run your health assessment{" "}
+                <span className="text-brand-warm">and see your score</span>
+              </h1>
+              <p className="text-base sm:text-lg text-brand-body/90 mb-4 leading-relaxed">
+                Add the metrics you have (labs, blood pressure, VO2, body
+                composition). We turn them into a clear metabolic, fitness, and
+                body-composition score you can track over time. You’ll sign in
+                once so your results save to your dashboard.
+              </p>
+              <p className="text-sm text-brand-warm-muted mb-8">
+                <Link
+                  href="/how-it-works"
+                  className="text-brand-warm font-semibold hover:text-brand-gold-deep underline-offset-4 hover:underline"
+                >
+                  How scoring works
+                </Link>
+                <span className="mx-2 text-brand-warm-muted/70">·</span>
+                About 5 minutes
+                <span className="mx-2 text-brand-warm-muted/70">·</span>
+                No payment
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+                <button
+                  type="button"
+                  onClick={onStartAssessment}
+                  className="btn-primary flex items-center justify-center gap-2 text-base px-8 py-4 w-full sm:w-auto"
+                >
+                  Start your assessment
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+                <p className="text-center sm:text-left text-sm text-brand-body sm:pl-2">
+                  Returning user?{" "}
+                  <button
+                    type="button"
+                    onClick={onAuthClick}
+                    className="font-semibold text-brand-warm hover:text-brand-gold-deep underline-offset-4 hover:underline"
+                  >
+                    Sign in
+                  </button>
+                </p>
               </div>
-              <span className="text-xl font-semibold text-gray-900">
-                HALO Wellness
+            </div>
+
+            <div className="mt-12 lg:mt-14 max-w-md mx-auto lg:mx-0 lg:max-w-sm">
+              <p className="text-[0.65rem] font-semibold text-brand-warm-muted uppercase tracking-[0.12em] mb-3 text-center lg:text-left">
+                Example summary
+              </p>
+              <div className="card">
+                <div className="relative rounded-2xl p-6 text-center text-white mb-4 overflow-hidden bg-gradient-to-br from-brand-charcoal via-brand-warm to-[#1a1612] shadow-[0_12px_40px_rgba(22,22,22,0.35)] ring-1 ring-white/10">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_-10%,rgba(218,176,83,0.35),transparent_55%)] pointer-events-none" />
+                  <div className="relative">
+                    <div className="text-4xl font-display font-semibold mb-1 text-white tabular-nums">
+                      92
+                    </div>
+                    <div className="text-base text-white/90">Overall score</div>
+                    <div className="text-brand-gold/90 text-xs font-medium mt-2 tracking-wide uppercase">
+                      Illustrative only
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between items-center gap-3">
+                    <span className="text-brand-body">Metabolic</span>
+                    <div className="w-28 bg-brand-sand rounded-full h-2 shrink-0">
+                      <div className="bg-gradient-to-r from-brand-gold-deep to-brand-gold h-2 rounded-full w-4/5" />
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center gap-3">
+                    <span className="text-brand-body">Fitness</span>
+                    <div className="w-28 bg-brand-sand rounded-full h-2 shrink-0">
+                      <div className="bg-gradient-to-r from-brand-gold-deep to-brand-gold h-2 rounded-full w-3/4" />
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center gap-3">
+                    <span className="text-brand-body">Body composition</span>
+                    <div className="w-28 bg-brand-sand rounded-full h-2 shrink-0">
+                      <div className="bg-gradient-to-r from-brand-gold-deep to-brand-gold h-2 rounded-full w-4/5" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="py-14 bg-white/70 border-t border-brand-charcoal/5">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+            <h2 className="font-display text-2xl sm:text-3xl font-semibold text-brand-ink mb-2 text-center tracking-tight">
+              Three simple steps
+            </h2>
+            <p className="text-brand-body/85 text-center mb-10 max-w-lg mx-auto text-sm sm:text-base leading-relaxed">
+              Everything flows from one goal: get a number you can compare next
+              time you update your labs or training.
+            </p>
+            <div className="grid sm:grid-cols-3 gap-6">
+              <div className="card flex flex-col items-center text-center p-6">
+                <div className="w-12 h-12 rounded-2xl bg-brand-charcoal flex items-center justify-center mb-4 ring-2 ring-brand-gold/25 shadow-md">
+                  <ClipboardList className="w-6 h-6 text-brand-gold" strokeWidth={2} />
+                </div>
+                <h3 className="font-display font-semibold text-brand-ink mb-2 text-lg">
+                  1. Enter your numbers
+                </h3>
+                <p className="text-sm text-brand-body/90 leading-relaxed">
+                  Use recent labs and vitals—skip anything you don’t have yet.
+                </p>
+              </div>
+              <div className="card flex flex-col items-center text-center p-6">
+                <div className="w-12 h-12 rounded-2xl bg-brand-charcoal flex items-center justify-center mb-4 ring-2 ring-brand-gold/25 shadow-md">
+                  <LineChart className="w-6 h-6 text-brand-gold" strokeWidth={2} />
+                </div>
+                <h3 className="font-display font-semibold text-brand-ink mb-2 text-lg">
+                  2. Get your scores
+                </h3>
+                <p className="text-sm text-brand-body/90 leading-relaxed">
+                  See category breakdowns and an overall grade in one view.
+                </p>
+              </div>
+              <div className="card flex flex-col items-center text-center p-6">
+                <div className="w-12 h-12 rounded-2xl bg-brand-charcoal flex items-center justify-center mb-4 ring-2 ring-brand-gold/25 shadow-md">
+                  <Activity className="w-6 h-6 text-brand-gold" strokeWidth={2} />
+                </div>
+                <h3 className="font-display font-semibold text-brand-ink mb-2 text-lg">
+                  3. Save to your account
+                </h3>
+                <p className="text-sm text-brand-body/90 leading-relaxed">
+                  Sign in so assessments stay in your dashboard for next time.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-brand-warm-muted">
+              <span className="inline-flex items-center gap-1.5">
+                <Gauge className="w-4 h-4 text-brand-gold" />
+                Fitness inputs
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <TrendingUp className="w-4 h-4 text-brand-gold" />
+                Body composition
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <BadgeCheck className="w-4 h-4 text-brand-gold" />
+                Metabolic markers
               </span>
             </div>
-            <div className="hidden md:flex items-center space-x-8">
-              <Link href="/how-it-works" className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors">
-                How It Works
-              </Link>
-              <button onClick={onAuthClick} className="btn-primary">
-                Login / Sign Up
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
 
-      {/* Hero Section - Clean & Minimal */}
-      <section className="bg-slate-300 py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
-                Your Complete
-                <span className="text-halo-blue block">Health Assessment</span>
-              </h1>
-              <p className="text-xl text-gray-600 mb-8 leading-relaxed max-w-lg">
-                Get a comprehensive evaluation of your metabolic health, fitness
-                level, and longevity potential with our scientifically-backed
-                assessment.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <button
-                  onClick={onStartAssessment}
-                  className="btn-primary flex items-center justify-center group text-base px-8 py-4"
-                >
-                  Start Your Assessment
-                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </button>
-                <button
-                  onClick={() => setShowDemo(!showDemo)}
-                  className="btn-secondary flex items-center justify-center text-base px-8 py-4"
-                >
-                  <PlayCircle className="w-5 h-5 mr-2" strokeWidth={2} />
-                  {showDemo ? "Hide Demo" : "Watch Demo"}
-                </button>
-              </div>
-            </div>
-
-            {/* Clean Score Card */}
-            <div className="relative">
-              <div className="card transform hover:scale-105 transition-transform duration-300">
-                <div className="bg-gradient-to-r from-halo-blue to-primary-700 rounded-xl p-8 text-center text-white mb-6">
-                  <div className="text-5xl font-bold mb-2">92</div>
-                  <div className="text-xl opacity-90">Health Score</div>
-                  <div className="text-blue-100 text-sm mt-2">
-                    Excellent Range
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-700 font-medium">
-                      Metabolic Health
-                    </span>
-                    <div className="w-24 bg-gray-100 rounded-full h-2">
-                      <div className="bg-recovery-emerald h-2 rounded-full w-4/5 transition-all duration-1000"></div>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-700 font-medium">
-                      Fitness Level
-                    </span>
-                    <div className="w-24 bg-gray-100 rounded-full h-2">
-                      <div className="bg-halo-blue h-2 rounded-full w-3/4 transition-all duration-1000 delay-200"></div>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-700 font-medium">
-                      Body Composition
-                    </span>
-                    <div className="w-24 bg-gray-100 rounded-full h-2">
-                      <div className="bg-vitality-gold h-2 rounded-full w-4/5 transition-all duration-1000 delay-400"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works Section */}
-      <section className="py-20 bg-slate-300">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              How the Assessment Works
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Our comprehensive assessment evaluates four key dimensions of your health using evidence-based metrics and sliding scale scoring.
+            <p className="mt-8 text-xs text-brand-warm-muted text-center max-w-2xl mx-auto leading-relaxed">
+              Educational only—not a diagnosis. Talk to a clinician about
+              treatment decisions.
             </p>
           </div>
+        </section>
 
-          {/* Four Steps */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <div className="card text-center">
-              <div className="w-14 h-14 bg-gradient-to-br from-slate-600 to-slate-700 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                <Activity className="w-7 h-7 text-white" strokeWidth={2} />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-2">1. Basic Info</h3>
-              <p className="text-sm text-gray-600">
-                Age, gender, and personal information that influence your health baseline
-              </p>
-            </div>
-
-            <div className="card text-center">
-              <div className="w-14 h-14 bg-gradient-to-br from-slate-600 to-slate-700 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                <Stethoscope className="w-7 h-7 text-white" strokeWidth={2} />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-2">2. Metabolic Health</h3>
-              <p className="text-sm text-gray-600">
-                Blood pressure, A1c, lipid panel (LDL, HDL, triglycerides, Lp(a), ApoB), and waist-to-height ratio
-              </p>
-            </div>
-
-            <div className="card text-center">
-              <div className="w-14 h-14 bg-gradient-to-br from-slate-600 to-slate-700 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                <Gauge className="w-7 h-7 text-white" strokeWidth={2} />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-2">3. Fitness Level</h3>
-              <p className="text-sm text-gray-600">
-                VO2 max (cardiovascular fitness) and grip strength (functional strength)
-              </p>
-            </div>
-
-            <div className="card text-center">
-              <div className="w-14 h-14 bg-gradient-to-br from-slate-600 to-slate-700 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                <TrendingUp className="w-7 h-7 text-white" strokeWidth={2} />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-2">4. Body Composition</h3>
-              <p className="text-sm text-gray-600">
-                Body fat percentage and skeletal muscle mass (age and gender-adjusted)
-              </p>
-            </div>
-          </div>
-
-          {/* Scoring Details */}
-          <div className="card">
-            <h3 className="text-2xl font-semibold text-gray-900 mb-6 text-center">
-              Evidence-Based Scoring System
-            </h3>
-            <div className="grid md:grid-cols-2 gap-8">
-              <div>
-                <h4 className="font-semibold text-gray-900 mb-4">How Scores Are Calculated</h4>
-                <ul className="space-y-3 text-gray-600">
-                  <li className="flex items-start">
-                    <BadgeCheck className="w-5 h-5 text-slate-600 mr-2 mt-0.5 flex-shrink-0" strokeWidth={2} />
-                    <span><strong>Sliding Scale Scoring:</strong> Uses linear interpolation between thresholds for precise evaluation</span>
-                  </li>
-                  <li className="flex items-start">
-                    <BadgeCheck className="w-5 h-5 text-slate-600 mr-2 mt-0.5 flex-shrink-0" strokeWidth={2} />
-                    <span><strong>Weighted Categories:</strong> Metabolic Health (41%), VO2 Max (24%), Grip Strength (12%), Body Composition (24%)</span>
-                  </li>
-                  <li className="flex items-start">
-                    <BadgeCheck className="w-5 h-5 text-slate-600 mr-2 mt-0.5 flex-shrink-0" strokeWidth={2} />
-                    <span><strong>Age & Gender Adjusted:</strong> All metrics are normalized for your demographic profile</span>
-                  </li>
-                  <li className="flex items-start">
-                    <BadgeCheck className="w-5 h-5 text-slate-600 mr-2 mt-0.5 flex-shrink-0" strokeWidth={2} />
-                    <span><strong>Grade System:</strong> A+ (90+) to F (&lt;50) with clear risk assessments</span>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold text-gray-900 mb-4">Research-Backed Metrics</h4>
-                <ul className="space-y-3 text-gray-600">
-                  <li className="flex items-start">
-                    <BadgeCheck className="w-5 h-5 text-slate-600 mr-2 mt-0.5 flex-shrink-0" strokeWidth={2} />
-                    <span>Based on guidelines from ADA, AHA, NHANES, Cooper Institute, NIH, and ESC/EAS</span>
-                  </li>
-                  <li className="flex items-start">
-                    <BadgeCheck className="w-5 h-5 text-slate-600 mr-2 mt-0.5 flex-shrink-0" strokeWidth={2} />
-                    <span>Comprehensive lipid analysis including LDL/Total and HDL/Total ratios</span>
-                  </li>
-                  <li className="flex items-start">
-                    <BadgeCheck className="w-5 h-5 text-slate-600 mr-2 mt-0.5 flex-shrink-0" strokeWidth={2} />
-                    <span>Advanced markers like Lp(a) and ApoB for cardiovascular risk assessment</span>
-                  </li>
-                  <li className="flex items-start">
-                    <BadgeCheck className="w-5 h-5 text-slate-600 mr-2 mt-0.5 flex-shrink-0" strokeWidth={2} />
-                    <span>Skeletal muscle mass scoring based on European Working Group on Sarcopenia standards</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="mt-6 p-4 bg-slate-100 rounded-lg border border-slate-300">
-              <p className="text-sm text-gray-600 text-center">
-                <strong>Note:</strong> Results are for informational purposes only and should not replace professional medical advice. 
-                The assessment takes approximately 5 minutes to complete.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-20 bg-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Comprehensive Health Assessment
+        <section className="py-12 bg-brand-parchment/50 border-t border-brand-charcoal/5">
+          <div className="max-w-3xl mx-auto px-4 text-center">
+            <h2 className="font-display text-xl sm:text-2xl font-semibold text-brand-ink mb-4 tracking-tight">
+              Ready when you are
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Our advanced assessment evaluates multiple aspects of your health
-              to provide actionable insights and personalized recommendations.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="metric-card text-center group">
-              <div className="w-14 h-14 bg-gradient-to-br from-slate-200 to-slate-300 group-hover:from-slate-600 group-hover:to-slate-700 rounded-xl flex items-center justify-center mx-auto mb-4 transition-all shadow-md group-hover:shadow-lg transform group-hover:scale-110">
-                <UsersRound className="w-7 h-7 text-slate-600 group-hover:text-white transition-colors" strokeWidth={2} />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Basic Profile
-              </h3>
-              <p className="text-gray-600 text-sm">
-                Age, gender, and lifestyle factors that influence your health
-                baseline.
-              </p>
-            </div>
-
-            <div className="metric-card metric-emerald text-center group">
-              <div className="w-14 h-14 bg-gradient-to-br from-slate-200 to-slate-300 group-hover:from-slate-600 group-hover:to-slate-700 rounded-xl flex items-center justify-center mx-auto mb-4 transition-all shadow-md group-hover:shadow-lg transform group-hover:scale-110">
-                <Activity className="w-7 h-7 text-slate-600 group-hover:text-white transition-colors" strokeWidth={2} />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Metabolic Health
-              </h3>
-              <p className="text-gray-600 text-sm">
-                Blood pressure, glucose levels, and other key metabolic
-                indicators.
-              </p>
-            </div>
-
-            <div className="metric-card text-center group">
-              <div className="w-14 h-14 bg-gradient-to-br from-slate-200 to-slate-300 group-hover:from-slate-600 group-hover:to-slate-700 rounded-xl flex items-center justify-center mx-auto mb-4 transition-all shadow-md group-hover:shadow-lg transform group-hover:scale-110">
-                <Gauge className="w-7 h-7 text-slate-600 group-hover:text-white transition-colors" strokeWidth={2} />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Fitness Level
-              </h3>
-              <p className="text-gray-600 text-sm">
-                Exercise habits, cardiovascular fitness, and physical activity
-                assessment.
-              </p>
-            </div>
-
-            <div className="metric-card metric-gold text-center group">
-              <div className="w-14 h-14 bg-gradient-to-br from-slate-200 to-slate-300 group-hover:from-slate-600 group-hover:to-slate-700 rounded-xl flex items-center justify-center mx-auto mb-4 transition-all shadow-md group-hover:shadow-lg transform group-hover:scale-110">
-                <TrendingUp className="w-7 h-7 text-slate-600 group-hover:text-white transition-colors" strokeWidth={2} />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Body Composition
-              </h3>
-              <p className="text-gray-600 text-sm">
-                BMI, body fat percentage, and muscle mass distribution analysis.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Clean CTA Section */}
-      <section className="py-20 bg-slate-300">
-        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-gray-900 mb-6">
-            Ready to Discover Your Health Score?
-          </h2>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Take the first step towards a healthier, longer life with our
-            comprehensive assessment.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
+              type="button"
               onClick={onStartAssessment}
-              className="btn-primary flex items-center justify-center group text-lg px-8 py-4"
+              className="btn-primary inline-flex items-center gap-2 px-8 py-3.5"
             >
-              Start Your Free Assessment
-              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </button>
-            <button
-              onClick={onAuthClick}
-              className="btn-secondary flex items-center justify-center text-lg px-8 py-4"
-            >
-              Sign Up / Login
+              Start your assessment
+              <ArrowRight className="w-5 h-5" />
             </button>
           </div>
-          <div className="flex items-center justify-center mt-6 text-gray-500 text-sm">
-            <BadgeCheck className="w-4 h-4 mr-2" strokeWidth={2.5} />
-            No credit card required • Results in under 5 minutes
-          </div>
-        </div>
-      </section>
+        </section>
+      </main>
 
-      {/* Clean Footer */}
-      <footer className="bg-slate-200 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center mb-4">
-                <div className="w-8 h-8 bg-gradient-to-br from-slate-600 to-slate-700 rounded-lg flex items-center justify-center mr-3 shadow-md">
-                  <Sparkles className="w-5 h-5 text-white" strokeWidth={2.5} />
-                </div>
-                <span className="text-xl font-semibold text-gray-900">
-                  HALO Wellness
-                </span>
-              </div>
-              <p className="text-gray-600">
-                Empowering you to make informed decisions about your health and
-                longevity.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-4">Product</h3>
-              <ul className="space-y-2 text-gray-600">
-                <li>
-                  <button className="hover:text-gray-900 transition-colors">
-                    Health Assessment
-                  </button>
-                </li>
-                <li>
-                  <button className="hover:text-gray-900 transition-colors">
-                    Features
-                  </button>
-                </li>
-                <li>
-                  <button className="hover:text-gray-900 transition-colors">
-                    Pricing
-                  </button>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-4">Support</h3>
-              <ul className="space-y-2 text-gray-600">
-                <li>
-                  <button className="hover:text-gray-900 transition-colors">
-                    Help Center
-                  </button>
-                </li>
-                <li>
-                  <button className="hover:text-gray-900 transition-colors">
-                    Contact Us
-                  </button>
-                </li>
-                <li>
-                  <button className="hover:text-gray-900 transition-colors">
-                    Privacy Policy
-                  </button>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-4">Connect</h3>
-              <ul className="space-y-2 text-gray-600">
-                <li>
-                  <button className="hover:text-gray-900 transition-colors">
-                    Newsletter
-                  </button>
-                </li>
-                <li>
-                  <button className="hover:text-gray-900 transition-colors">
-                    Blog
-                  </button>
-                </li>
-                <li>
-                  <button className="hover:text-gray-900 transition-colors">
-                    Community
-                  </button>
-                </li>
-              </ul>
-            </div>
+      <footer className="bg-brand-sand/60 border-t border-brand-charcoal/5 py-8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-center sm:text-left">
+          <div className="flex items-center justify-center sm:justify-start gap-2">
+            <Sparkles className="w-5 h-5 text-brand-warm" strokeWidth={2} />
+            <span className="font-display font-semibold text-brand-ink">
+              HALO Wellness
+            </span>
           </div>
-          <div className="border-t border-gray-100 mt-8 pt-8 text-center text-gray-500">
-            <p>&copy; 2025 HALO Wellness. All rights reserved.</p>
+          <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-brand-body">
+            <button
+              type="button"
+              onClick={onStartAssessment}
+              className="hover:text-brand-ink font-medium transition-colors"
+            >
+              Start assessment
+            </button>
+            <Link
+              href="/how-it-works"
+              className="hover:text-brand-ink font-medium transition-colors"
+            >
+              How scoring works
+            </Link>
+            <button
+              type="button"
+              onClick={onAuthClick}
+              className="hover:text-brand-ink font-medium transition-colors"
+            >
+              Sign in
+            </button>
           </div>
+          <p className="text-xs text-brand-warm-muted sm:shrink-0">
+            © 2026 HALO Wellness
+          </p>
         </div>
       </footer>
     </div>

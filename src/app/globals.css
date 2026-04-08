@@ -1,45 +1,58 @@
-@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss";
 
+/*
+  Brand direction: inspired by healthcoachinc.com (Poppins + serif headlines,
+  parchment creams, charcoal + warm brown, gold accents) — refined for a cleaner 2020s product UI.
+*/
 @theme {
-  /* Rustic Blue Palette - Muted & Darker */
-  --color-slate-50: #f1f5f9;
-  --color-slate-100: #e2e8f0;
-  --color-slate-200: #cbd5e1;
-  --color-slate-300: #94a3b8;
-  --color-slate-400: #64748b;
-  --color-slate-500: #475569;
-  --color-slate-600: #334155;
-  --color-slate-700: #1e293b;
-  --color-slate-800: #0f172a;
-  --color-slate-900: #020617;
+  /* Neutrals (keep slate scale for existing screens) */
+  --color-slate-50: #faf7f2;
+  --color-slate-100: #f3eee6;
+  --color-slate-200: #e8e0d4;
+  --color-slate-300: #d4cbc0;
+  --color-slate-400: #9c948a;
+  --color-slate-500: #6b645a;
+  --color-slate-600: #534a3b;
+  --color-slate-700: #413b31;
+  --color-slate-800: #2a2620;
+  --color-slate-900: #161616;
 
-  /* Rustic Blue Accents - Muted & Desaturated */
-  --color-blue-sage: #5b6f7d; /* Muted blue-gray */
-  --color-blue-steel: #4a5568; /* Rustic steel blue */
-  --color-blue-dust: #64748b; /* Dusty blue */
-  --color-blue-stone: #475569; /* Stone blue */
-  --color-blue-charcoal: #334155; /* Charcoal blue */
-  
-  /* Primary Brand Colors - Rustic Blue Tones */
-  --color-halo-blue: #475569; /* Rustic slate blue */
-  --color-halo-navy: #1e293b; /* Deep navy */
-  --color-recovery-emerald: #5b6f7d; /* Muted blue-green */
-  --color-vitality-gold: #64748b; /* Muted blue-gray */
-  --color-calm-gray: #e2e8f0; /* Light blue-gray */
-  --color-accent-rose: #64748b; /* Muted blue */
-  --color-accent-indigo: #475569; /* Rustic indigo */
-  
-  /* Background Colors - Darker Blue Base */
-  --color-bg-primary: #cbd5e1; /* Main background - darker blue-gray */
-  --color-bg-secondary: #94a3b8; /* Section background - medium blue-gray */
-  --color-bg-card: #f1f5f9; /* Card background - light blue-gray */
-  --color-bg-elevated: #e2e8f0; /* Elevated surfaces */
+  /* Health Coach Inc–adjacent brand */
+  --color-brand-charcoal: #161616;
+  --color-brand-ink: #0e0e0d;
+  --color-brand-body: #534a3b;
+  --color-brand-warm: #594e3e;
+  --color-brand-warm-muted: #827560;
+  --color-brand-cream: #faf7f2;
+  --color-brand-parchment: #ffebcd;
+  --color-brand-sand: #ffefd7;
+  --color-brand-gold: #dab053;
+  --color-brand-gold-deep: #8a6a1c;
+  --color-brand-line: rgba(218, 176, 83, 0.45);
 
-  /* Typography - Modern & Unique */
-  --font-family-sans: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, sans-serif;
-  --font-family-display: "Space Grotesk", "Manrope", sans-serif;
+  --color-halo-blue: #594e3e;
+  --color-halo-navy: #161616;
+  --color-recovery-emerald: #4a6b5c;
+  --color-vitality-gold: #dab053;
+  --color-calm-gray: #e8e0d4;
+  --color-accent-rose: #8b7355;
+  --color-accent-indigo: #413b31;
+
+  --color-primary-50: #faf7f2;
+  --color-primary-100: #f5efe6;
+  --color-primary-600: #594e3e;
+  --color-primary-700: #413b31;
+  --color-primary-800: #2c2720;
+
+  --color-bg-primary: #faf7f2;
+  --color-bg-secondary: #ffebcd;
+  --color-bg-card: #ffffff;
+  --color-bg-elevated: #fffefb;
+
+  --font-sans: var(--font-poppins), "Poppins", ui-sans-serif, system-ui,
+    sans-serif;
+  --font-display: var(--font-fraunces), "Fraunces", "Adamina", ui-serif,
+    Georgia, serif;
 
   /* Spacing - 4px base grid (more refined than 8px) */
   --spacing-px: 1px;
@@ -79,45 +92,45 @@
 
 /* Base Styles - Clean & Minimal */
 * {
-  border-color: var(--color-gray-200);
+  border-color: var(--color-slate-200);
 }
 
 body {
-  font-family: var(--font-family-sans);
-  line-height: 1.7;
-  color: var(--color-slate-800);
+  font-family: var(--font-sans);
+  line-height: 1.65;
+  color: var(--color-brand-body);
   background: var(--color-bg-primary);
   background-attachment: fixed;
   font-weight: 400;
-  letter-spacing: -0.011em;
+  letter-spacing: -0.01em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 /* Typography Hierarchy - More Refined */
 h1 {
-  font-family: var(--font-family-display);
+  font-family: var(--font-display);
   font-size: 2.5rem;
-  font-weight: 700;
-  line-height: 1.15;
-  color: var(--color-slate-900);
-  letter-spacing: -0.03em;
+  font-weight: 600;
+  line-height: 1.12;
+  color: var(--color-brand-ink);
+  letter-spacing: -0.02em;
 }
 
 h2 {
-  font-family: var(--font-family-display);
+  font-family: var(--font-display);
   font-size: 2rem;
   font-weight: 600;
-  line-height: 1.25;
-  color: var(--color-slate-900);
-  letter-spacing: -0.025em;
+  line-height: 1.2;
+  color: var(--color-brand-ink);
+  letter-spacing: -0.02em;
 }
 
 h3 {
   font-size: 1.5rem;
   font-weight: 600;
   line-height: 1.4;
-  color: var(--color-slate-800);
+  color: var(--color-brand-ink);
   letter-spacing: -0.02em;
 }
 
@@ -125,25 +138,29 @@ h4 {
   font-size: 1.25rem;
   font-weight: 500;
   line-height: 1.5;
-  color: var(--color-slate-800);
+  color: var(--color-brand-body);
   letter-spacing: -0.015em;
 }
 
 /* Refined Component Classes */
 
-/* Primary Button - More Sophisticated */
+/* Primary Button — charcoal + gold accent */
 .btn-primary {
-  background: linear-gradient(135deg, var(--color-slate-600) 0%, var(--color-slate-700) 100%);
-  color: white;
+  background: linear-gradient(
+    180deg,
+    var(--color-brand-charcoal) 0%,
+    #0a0a0a 100%
+  );
+  color: rgb(247, 247, 247);
   padding: var(--spacing-3) var(--spacing-6);
   border-radius: var(--radius-lg);
   font-weight: 600;
   font-size: 0.875rem;
   letter-spacing: -0.01em;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid var(--color-slate-500);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 0 rgba(218, 176, 83, 0.35), 0 8px 24px rgba(22, 22, 22, 0.2);
   position: relative;
   overflow: hidden;
 }
@@ -155,7 +172,12 @@ h4 {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(218, 176, 83, 0.12),
+    transparent
+  );
   transition: left 0.5s;
 }
 
@@ -164,45 +186,44 @@ h4 {
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, var(--color-slate-700) 0%, var(--color-slate-800) 100%);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16), 0 2px 4px rgba(0, 0, 0, 0.08);
+  background: linear-gradient(180deg, #222 0%, var(--color-brand-charcoal) 100%);
+  box-shadow: 0 0 0 1px rgba(218, 176, 83, 0.25), 0 12px 28px rgba(22, 22, 22, 0.28);
   transform: translateY(-1px);
-  border-color: var(--color-slate-600);
+  border-color: rgba(218, 176, 83, 0.35);
 }
 
 .btn-primary:active {
   transform: translateY(0);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 0 rgba(218, 176, 83, 0.2), 0 4px 12px rgba(22, 22, 22, 0.2);
 }
 
-/* Secondary Button - Minimal */
 .btn-secondary {
   background-color: var(--color-bg-card);
-  color: var(--color-slate-700);
+  color: var(--color-brand-warm);
   padding: var(--spacing-3) var(--spacing-6);
   border-radius: var(--radius-lg);
   font-weight: 500;
   font-size: 0.875rem;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1.5px solid var(--color-slate-300);
+  border: 1.5px solid var(--color-slate-200);
   cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 2px rgba(22, 22, 22, 0.06);
 }
 
 .btn-secondary:hover {
-  background-color: var(--color-bg-elevated);
-  border-color: var(--color-slate-400);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  background-color: var(--color-brand-parchment);
+  border-color: var(--color-brand-gold);
+  box-shadow: 0 2px 8px rgba(22, 22, 22, 0.08);
   transform: translateY(-1px);
 }
 
-/* Clean Cards - More Refined */
 .card {
   background-color: var(--color-bg-card);
   border-radius: var(--radius-xl);
   padding: var(--spacing-6);
-  border: 1px solid var(--color-slate-300);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(22, 22, 22, 0.06);
+  box-shadow: 0 2px 12px rgba(22, 22, 22, 0.06),
+    0 0 0 1px rgba(255, 255, 255, 0.6) inset;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -215,23 +236,29 @@ h4 {
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--color-slate-200), transparent);
-  opacity: 0.5;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-brand-line),
+    transparent
+  );
+  opacity: 0.85;
 }
 
 .card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14), 0 0 0 1px rgba(0, 0, 0, 0.08);
-  border-color: var(--color-slate-400);
+  box-shadow: 0 8px 24px rgba(22, 22, 22, 0.1),
+    0 0 0 1px rgba(218, 176, 83, 0.12) inset;
+  border-color: rgba(218, 176, 83, 0.2);
   transform: translateY(-2px);
 }
 
 /* Minimal Input Fields - Refined */
 .input-field {
   width: 100%;
-  border: 1.5px solid var(--color-slate-300);
+  border: 1.5px solid var(--color-slate-200);
   border-radius: var(--radius-md);
   background-color: var(--color-bg-card);
-  font-family: var(--font-family-sans);
+  font-family: var(--font-sans);
   font-size: 0.875rem;
   color: var(--color-slate-900);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -239,9 +266,9 @@ h4 {
 
 .input-field:focus {
   outline: none;
-  border-color: var(--color-slate-500);
+  border-color: var(--color-brand-warm);
   background-color: var(--color-bg-card);
-  box-shadow: 0 0 0 4px rgba(71, 85, 105, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 0 4px rgba(218, 176, 83, 0.18), 0 2px 8px rgba(22, 22, 22, 0.08);
 }
 
 .input-field::placeholder {
@@ -273,9 +300,9 @@ h4 {
 .score-display {
   background: linear-gradient(
     135deg,
-    var(--color-slate-600) 0%,
-    var(--color-slate-700) 50%,
-    var(--color-slate-800) 100%
+    var(--color-brand-charcoal) 0%,
+    var(--color-brand-warm) 45%,
+    #1a1814 100%
   );
   color: white;
   padding: var(--spacing-8);
@@ -308,15 +335,15 @@ h4 {
   background-color: var(--color-bg-card);
   border-radius: var(--radius-xl);
   padding: var(--spacing-5);
-  border: 1px solid var(--color-slate-300);
+  border: 1px solid rgba(22, 22, 22, 0.06);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(22, 22, 22, 0.06);
   position: relative;
 }
 
 .metric-card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
-  border-color: var(--color-slate-400);
+  box-shadow: 0 8px 20px rgba(22, 22, 22, 0.1);
+  border-color: rgba(218, 176, 83, 0.22);
   transform: translateY(-2px);
 }
 
@@ -339,7 +366,7 @@ h4 {
   bottom: 0;
   width: 100%;
   background-color: white;
-  border-top: 1px solid var(--color-gray-100);
+  border-top: 1px solid var(--color-slate-200);
   backdrop-filter: blur(10px);
   background-color: rgb(255 255 255 / 0.95);
   display: flex;
@@ -353,7 +380,7 @@ h4 {
   flex-direction: column;
   align-items: center;
   padding: var(--spacing-2);
-  color: var(--color-gray-500);
+  color: var(--color-slate-500);
   transition: color 0.2s ease;
   text-decoration: none;
   font-size: 0.75rem;
@@ -369,8 +396,8 @@ h4 {
 .loading-spinner {
   width: 1.5rem;
   height: 1.5rem;
-  border: 2px solid var(--color-gray-200);
-  border-top: 2px solid var(--color-halo-blue);
+  border: 2px solid var(--color-slate-200);
+  border-top: 2px solid var(--color-brand-gold);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -410,7 +437,11 @@ h4 {
 }
 
 .text-gradient {
-  background: linear-gradient(135deg, var(--color-slate-700), var(--color-slate-900));
+  background: linear-gradient(
+    135deg,
+    var(--color-brand-warm),
+    var(--color-brand-ink)
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -457,6 +488,20 @@ h4 {
 
 .animate-fade-in-up {
   animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes assessment-calc-bar {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.assessment-calc-bar {
+  animation: assessment-calc-bar 3.6s ease-out forwards;
+  width: 0%;
 }
 
 /* Focus States - Accessible */

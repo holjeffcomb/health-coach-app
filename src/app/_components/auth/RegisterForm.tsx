@@ -2,9 +2,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { signUp, signIn } from "@/lib/auth-client";
 import {
-  User,
+  signUp,
+  signIn,
+  mapBetterAuthUserToAppUser,
+} from "@/lib/auth-client";
+import type { User } from "@/app/types/wellness";
+import {
+  User as UserIcon,
   Mail,
   Lock,
   Eye,
@@ -16,13 +21,76 @@ import {
 } from "lucide-react";
 
 interface RegisterFormProps {
-  onSuccess?: () => void;
+  /** Called with the signed-in user immediately so the app can route before /session catches up. */
+  onSuccess?: (user: User) => void;
   onBackToLanding?: () => void;
+  /** Which form to show first when this screen opens (e.g. Sign in from landing vs Start assessment). */
+  initialView?: "login" | "signup";
+}
+
+/** Better Auth `code` when present (e.g. INVALID_EMAIL_OR_PASSWORD) */
+function errorCodeFromAuth(err: unknown): string | null {
+  if (!err || typeof err !== "object") {
+    return null;
+  }
+  const o = err as Record<string, unknown>;
+  if (typeof o.code === "string") {
+    return o.code;
+  }
+  const nested = o.error;
+  if (nested && typeof nested === "object" && "code" in nested) {
+    const c = (nested as Record<string, unknown>).code;
+    return typeof c === "string" ? c : null;
+  }
+  return null;
+}
+
+/** Human-readable message from Better Auth / better-fetch payloads */
+function messageFromAuthFailure(err: unknown): string | null {
+  if (!err || typeof err !== "object") {
+    return null;
+  }
+  const o = err as Record<string, unknown>;
+  if (typeof o.message === "string" && o.message.trim()) {
+    return o.message;
+  }
+  const nested = o.error;
+  if (nested && typeof nested === "object") {
+    const e = nested as Record<string, unknown>;
+    if (typeof e.message === "string" && e.message.trim()) {
+      return e.message;
+    }
+    if (typeof e.code === "string" && e.code.trim()) {
+      return e.code.replace(/_/g, " ");
+    }
+  }
+  return null;
+}
+
+function extractUserFromAuthResult(result: unknown): unknown {
+  if (!result || typeof result !== "object") {
+    return null;
+  }
+  const r = result as Record<string, unknown>;
+  if ("error" in r && r.error) {
+    return null;
+  }
+  if ("data" in r && r.data && typeof r.data === "object") {
+    const d = r.data as Record<string, unknown>;
+    if ("user" in d) {
+      return d.user;
+    }
+  }
+  if ("user" in r) {
+    return r.user;
+  }
+  return null;
 }
 
 const RegisterForm: React.FC<RegisterFormProps> = ({
   onSuccess,
   onBackToLanding,
+  initialView = "signup",
 }) => {
   const [formData, setFormData] = useState({
     firstName: "",
@@ -37,7 +105,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(initialView === "login");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -98,28 +166,43 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
       }
 
       if ("error" in result && result.error) {
-        setError(result.error.message || "Authentication failed");
+        const r = result as { error: unknown };
+        const code = errorCodeFromAuth(r.error);
+        const msg =
+          messageFromAuthFailure(r.error) ||
+          (typeof r.error === "object" &&
+          r.error !== null &&
+          "statusText" in r.error &&
+          typeof (r.error as { statusText?: string }).statusText === "string"
+            ? (r.error as { statusText: string }).statusText
+            : null);
+        let text =
+          msg ||
+          (isLogin
+            ? "Sign-in failed. Check your email and password, or create an account first."
+            : "Could not create account. See details below or try another email.");
+        if (isLogin && code === "INVALID_EMAIL_OR_PASSWORD") {
+          text =
+            "That email and password don’t match our records. If you haven’t signed up yet, use “Sign up” below. If you have, check spelling, caps lock, and that you’re using the same email as when you registered.";
+        }
+        setError(text);
         return;
       }
 
-      if ("data" in result && result.data) {
-        const userData = result.data.user;
-        if (userData) {
-          setSuccess(true);
-          setTimeout(() => onSuccess?.(), 1500);
-          return;
-        }
-      }
-
-      if ("user" in result && result.user) {
+      const rawUser = extractUserFromAuthResult(result);
+      const appUser = mapBetterAuthUserToAppUser(rawUser);
+      if (appUser) {
         setSuccess(true);
-        setTimeout(() => onSuccess?.(), 1500);
+        onSuccess?.(appUser);
         return;
       }
 
       setError("Authentication response unclear. Please try again.");
     } catch (err: unknown) {
-      let errorMessage = `${isLogin ? "Login" : "Registration"} failed`;
+      const picked = messageFromAuthFailure(err);
+      let errorMessage =
+        picked ||
+        `${isLogin ? "Login" : "Registration"} failed — check the browser Network tab response body for details.`;
 
       if (
         typeof err === "object" &&
@@ -127,14 +210,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
         "message" in err &&
         typeof (err as { message?: string }).message === "string"
       ) {
-
-        if (
-          (err as { message: string }).message.includes("Invalid") ||
-          (err as { message: string }).message.includes("password")
-        ) {
+        const m = (err as { message: string }).message;
+        if (m.includes("Invalid") || m.includes("password")) {
           errorMessage = "Invalid email or password";
-        } else {
-          errorMessage = (err as { message: string }).message;
+        } else if (m && !picked) {
+          errorMessage = m;
         }
       }
       setError(errorMessage);
@@ -162,8 +242,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
           {/* Header */}
           <div className="text-center mb-8">
             <div className="flex items-center justify-center mb-6">
-              <div className="w-12 h-12 bg-halo-blue rounded-xl flex items-center justify-center mr-3">
-                <Calculator className="w-7 h-7 text-white" />
+              <div className="w-12 h-12 bg-brand-charcoal rounded-xl flex items-center justify-center mr-3 ring-1 ring-brand-gold/35 shadow-md">
+                <Calculator className="w-7 h-7 text-brand-gold" />
               </div>
               <span className="text-2xl font-semibold text-gray-900">
                 HALO Wellness
@@ -200,7 +280,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
             {!isLogin && (
               <div className="grid grid-cols-2 gap-4">
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <UserIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
                     type="text"
                     name="firstName"
@@ -212,7 +292,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
                   />
                 </div>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <UserIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
                     type="text"
                     name="lastName"

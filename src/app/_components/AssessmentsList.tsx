@@ -1,5 +1,5 @@
 // components/AssessmentsList.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Calendar, TrendingUp, Eye, Loader2 } from "lucide-react";
 import AssessmentModal from "./AssessmentModal";
 import { Assessment } from "../types/wellness";
@@ -11,13 +11,32 @@ interface AssessmentsListProps {
 const AssessmentsList: React.FC<AssessmentsListProps> = ({ userId }) => {
   const [assessments, setAssessments] = useState<Assessment[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedAssessment, setSelectedAssessment] =
-    useState<Assessment | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const selectedAssessment = useMemo(
+    () => assessments.find((a) => a.id === selectedId) ?? null,
+    [assessments, selectedId],
+  );
 
   useEffect(() => {
     fetchAssessments();
   }, [userId]);
+
+  useEffect(() => {
+    if (selectedId && !assessments.some((a) => a.id === selectedId)) {
+      setSelectedId(null);
+    }
+  }, [assessments, selectedId]);
+
+  useEffect(() => {
+    if (!selectedId) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [selectedId]);
 
   const fetchAssessments = async () => {
     try {
@@ -120,40 +139,42 @@ const AssessmentsList: React.FC<AssessmentsListProps> = ({ userId }) => {
             {assessments.map((assessment) => (
               <div
                 key={assessment.id}
-                className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer"
-                onClick={() => setSelectedAssessment(assessment)}
+                className="border border-gray-200 rounded-lg p-4 hover:border-blue-200 hover:shadow-sm transition-all"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-3 mb-2">
                       <h3 className="font-semibold text-gray-900">
                         {assessment.title}
                       </h3>
                       <span
-                        className={`px-3 py-1 rounded-full text-sm font-bold ${getGradeColor(
-                          assessment.grade.grade
+                        className={`px-3 py-1 rounded-full text-sm font-bold shrink-0 ${getGradeColor(
+                          assessment.grade.grade,
                         )}`}
                       >
                         {assessment.grade.grade}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-gray-600">
                       <div className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
+                        <Calendar className="w-4 h-4 shrink-0" />
                         <span>{formatDate(assessment.created_at)}</span>
                       </div>
-                      <div className="hidden sm:block">
+                      <div className="hidden sm:block line-clamp-2">
                         {assessment.grade.meaning}
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                      <Eye className="w-5 h-5" strokeWidth={2} />
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedId(assessment.id)}
+                    className="shrink-0 inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition-colors"
+                  >
+                    <Eye className="w-4 h-4" strokeWidth={2} />
+                    View
+                  </button>
                 </div>
               </div>
             ))}
@@ -164,8 +185,8 @@ const AssessmentsList: React.FC<AssessmentsListProps> = ({ userId }) => {
       {/* Assessment Modal */}
       <AssessmentModal
         assessment={selectedAssessment}
-        isOpen={!!selectedAssessment}
-        onClose={() => setSelectedAssessment(null)}
+        isOpen={selectedId !== null && selectedAssessment !== null}
+        onClose={() => setSelectedId(null)}
       />
     </>
   );

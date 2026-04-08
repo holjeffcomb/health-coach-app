@@ -17,6 +17,13 @@ export interface FormData {
   hdl: string;
 }
 
+/** Calculator form including extra body fields (e.g. PDF snapshot) */
+export interface ExtendedFormData extends FormData {
+  visceralFat: string;
+  height: string;
+  weight: string;
+}
+
 export interface Scores {
   metabolic: number;
   vo2Max: number;

@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useSession } from "@/lib/auth-client";
+import { useSession, mapBetterAuthUserToAppUser } from "@/lib/auth-client";
 import WellnessCalculator from "./_components/WellnessCalculator";
 import LandingPage from "./_components/LandingPage";
 import RegisterForm from "./_components/auth/RegisterForm";
@@ -11,8 +11,11 @@ import type { User } from "./types/wellness";
 
 type PageState = "landing" | "register" | "calculator" | "dashboard";
 
+type AuthFormView = "login" | "signup";
+
 export default function App() {
   const [currentPage, setCurrentPage] = useState<PageState>("landing");
+  const [authFormView, setAuthFormView] = useState<AuthFormView>("signup");
   const { data: session, isPending } = useSession();
 
   // We persist the user shape expected by WellnessCalculator/Dashboard.
@@ -22,11 +25,8 @@ export default function App() {
 
   // -- Helpers ---------------------------------------------------------------
 
-  const normalizeUser = (raw: unknown): User | null => {
-    // If your session.user shape already matches `User`, you can just cast.
-    // Otherwise, map the fields here.
-    return (raw as unknown as User) ?? null;
-  };
+  const normalizeUser = (raw: unknown): User | null =>
+    mapBetterAuthUserToAppUser(raw);
 
   const effectiveUser: User | null = useMemo(() => {
     const sUser = session?.user ? normalizeUser(session.user) : null;
@@ -56,8 +56,9 @@ export default function App() {
       return;
     }
 
-    // Protected pages require a user. If none, send to register.
+    // Protected pages require a user. If none, send to register (signup first).
     if (isProtected(currentPage) && !effectiveUser) {
+      setAuthFormView("signup");
       setCurrentPage("register");
       return;
     }
@@ -75,18 +76,34 @@ export default function App() {
   // -- Handlers --------------------------------------------------------------
 
   const handleStartAssessment = () => {
-    if (effectiveUser) setCurrentPage("calculator");
-    else setCurrentPage("register");
+    if (effectiveUser) {
+      setCurrentPage("calculator");
+      return;
+    }
+    setAuthFormView("signup");
+    setCurrentPage("register");
   };
 
-  const handleBackToLanding = () => {
-    // Explicit logout path: clear everything.
+  const handleSignInClick = () => {
+    setAuthFormView("login");
+    setCurrentPage("register");
+  };
+
+  /** After server sign-out (see Dashboard); clears client mirror state. */
+  const handleAfterSignOut = () => {
     setCurrentPage("landing");
     setPersistentUser(null);
     setHasEverHadSession(false);
   };
 
-  const handleAuthSuccess = () => {
+  /** Leave the auth screen without signing out (session cookie unchanged). */
+  const handleExitRegister = () => {
+    setCurrentPage("landing");
+  };
+
+  const handleAuthSuccess = (user: User) => {
+    setPersistentUser(user);
+    setHasEverHadSession(true);
     setCurrentPage("dashboard");
   };
 
@@ -118,8 +135,10 @@ export default function App() {
     case "register":
       return (
         <RegisterForm
+          key={authFormView}
+          initialView={authFormView}
           onSuccess={handleAuthSuccess}
-          onBackToLanding={handleBackToLanding}
+          onBackToLanding={handleExitRegister}
         />
       );
 
@@ -133,12 +152,15 @@ export default function App() {
           <div className="p-6 bg-white border-b border-calmGray">
             <button
               onClick={handleBackToDashboard}
-              className="text-haloBlue hover:text-primary-600 text-sm font-semibold transition-colors"
+              className="text-halo-blue hover:text-primary-700 text-sm font-semibold transition-colors"
             >
               ← Back to Dashboard
             </button>
           </div>
-          <WellnessCalculator user={effectiveUser} />
+          <WellnessCalculator
+            user={effectiveUser}
+            onBackToDashboard={handleBackToDashboard}
+          />
         </div>
       );
 
@@ -150,7 +172,7 @@ export default function App() {
       return (
         <Dashboard
           user={effectiveUser}
-          onLogout={handleBackToLanding}
+          onLogout={handleAfterSignOut}
           onStartCalculator={handleGoToCalculator}
         />
       );
@@ -159,7 +181,7 @@ export default function App() {
       return (
         <LandingPage
           onStartAssessment={handleStartAssessment}
-          onAuthClick={() => setCurrentPage("register")}
+          onAuthClick={handleSignInClick}
         />
       );
   }

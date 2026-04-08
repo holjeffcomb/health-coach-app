@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { Pool } from "pg";
+
+export const runtime = "nodejs";
 import { Resend } from "resend";
 import { generateAssessmentPDF } from "@/app/utils/pdfGenerator";
 
@@ -15,9 +18,10 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Verify authentication
+    const headersList = await headers();
     const session = await auth.api.getSession({
-      headers: req.headers,
+      headers: headersList,
+      query: { disableCookieCache: true },
     });
 
     if (!session) {
