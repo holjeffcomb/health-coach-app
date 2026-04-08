@@ -2,13 +2,18 @@
 import { betterAuth } from "better-auth";
 import { Pool } from "pg";
 
+/** Normalize origin (no trailing slash) for comparisons and Better Auth config. */
+function normalizeOrigin(url: string): string {
+  return url.replace(/\/$/, "");
+}
+
 /** Used for cookie issuance and OAuth callbacks; must match the browser origin in each environment. */
 function getAuthBaseURL(): string {
   if (process.env.BETTER_AUTH_URL) {
-    return process.env.BETTER_AUTH_URL;
+    return normalizeOrigin(process.env.BETTER_AUTH_URL.trim());
   }
   if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
+    return normalizeOrigin(`https://${process.env.VERCEL_URL}`);
   }
   return "http://localhost:3000";
 }
@@ -26,12 +31,20 @@ function getTrustedOrigins(): string[] {
   ];
   const fromEnv =
     process.env.BETTER_AUTH_TRUSTED_ORIGINS?.split(",")
-      .map((s) => s.trim())
+      .map((s) => normalizeOrigin(s.trim()))
       .filter(Boolean) ?? [];
   const vercel = process.env.VERCEL_URL
-    ? [`https://${process.env.VERCEL_URL}`]
+    ? [normalizeOrigin(`https://${process.env.VERCEL_URL}`)]
     : [];
-  return [...new Set([...defaults, ...fromEnv, ...vercel])];
+
+  /**
+   * Always allow the same origin as baseURL. Browsers send Origin for the *site* URL
+   * (e.g. https://app.healthcoachinc.com), while VERCEL_URL is often only *.vercel.app —
+   * without this, email sign-in returns 403 Forbidden in production on a custom domain.
+   */
+  const baseOrigin = getAuthBaseURL();
+
+  return [...new Set([baseOrigin, ...defaults, ...fromEnv, ...vercel])];
 }
 
 export const auth = betterAuth({
